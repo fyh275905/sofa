@@ -103,6 +103,23 @@ set(HEADER_FILES
     ${SRC_ROOT}/collision/IntersectorFactory.h
     ${SRC_ROOT}/collision/NarrowPhaseDetection.h
     ${SRC_ROOT}/collision/Pipeline.h
+    ${SRC_ROOT}/datatype/Data[bool].h
+    ${SRC_ROOT}/datatype/Data[string].h
+    ${SRC_ROOT}/datatype/Data[fixed_array].h
+    ${SRC_ROOT}/datatype/Data[BoundingBox].h
+    ${SRC_ROOT}/datatype/Data[ComponentState].h
+    ${SRC_ROOT}/datatype/Data[Integer].h
+    ${SRC_ROOT}/datatype/Data[Mat].h
+    ${SRC_ROOT}/datatype/Data[Material].h
+    ${SRC_ROOT}/datatype/Data[OptionsGroup].h
+    ${SRC_ROOT}/datatype/Data[PrimitiveGroup].h
+    ${SRC_ROOT}/datatype/Data[Quat].h
+    ${SRC_ROOT}/datatype/Data[RGBAColor].h
+    ${SRC_ROOT}/datatype/Data[Scalar].h
+    ${SRC_ROOT}/datatype/Data[Tag].h
+    ${SRC_ROOT}/datatype/Data[Topology].h
+    ${SRC_ROOT}/datatype/Data[TopologyChange].h
+    ${SRC_ROOT}/datatype/Data[Vec].h
     ${SRC_ROOT}/loader/BaseLoader.h
     ${SRC_ROOT}/loader/ImageLoader.h
     ${SRC_ROOT}/loader/MeshLoader.h
@@ -127,6 +144,7 @@ set(HEADER_FILES
     ${SRC_ROOT}/objectmodel/ContextObject.h
     ${SRC_ROOT}/objectmodel/DDGNode.h
     ${SRC_ROOT}/objectmodel/Data.h
+    ${SRC_ROOT}/objectmodel/Data.inl
     ${SRC_ROOT}/objectmodel/DataCallback.h
     ${SRC_ROOT}/objectmodel/DataContentValue.h
     ${SRC_ROOT}/objectmodel/DataFileName.h
@@ -156,6 +174,8 @@ set(HEADER_FILES
     ${SRC_ROOT}/topology/TopologicalMapping.h
     ${SRC_ROOT}/topology/Topology.h
     ${SRC_ROOT}/topology/TopologyChange.h
+    ${SRC_ROOT}/topology/TopologyElement.h
+    ${SRC_ROOT}/topology/TopologyChangeClasses.h
     ${SRC_ROOT}/topology/TopologyHandler.h
     ${SRC_ROOT}/topology/TopologyData.h
     ${SRC_ROOT}/topology/TopologyData.inl
@@ -232,6 +252,23 @@ set(SOURCE_FILES
     ${SRC_ROOT}/collision/Intersection.cpp
     ${SRC_ROOT}/collision/NarrowPhaseDetection.cpp
     ${SRC_ROOT}/collision/Pipeline.cpp
+    ${SRC_ROOT}/datatype/Data[bool].cpp
+    ${SRC_ROOT}/datatype/Data[string].cpp
+    ${SRC_ROOT}/datatype/Data[fixed_array].cpp
+    ${SRC_ROOT}/datatype/Data[BoundingBox].cpp
+    ${SRC_ROOT}/datatype/Data[ComponentState].cpp
+    ${SRC_ROOT}/datatype/Data[Integer].cpp
+    ${SRC_ROOT}/datatype/Data[Mat].cpp
+    ${SRC_ROOT}/datatype/Data[Material].cpp
+    ${SRC_ROOT}/datatype/Data[OptionsGroup].cpp
+    ${SRC_ROOT}/datatype/Data[PrimitiveGroup].cpp
+    ${SRC_ROOT}/datatype/Data[Quat].cpp
+    ${SRC_ROOT}/datatype/Data[RGBAColor].cpp
+    ${SRC_ROOT}/datatype/Data[Scalar].cpp
+    ${SRC_ROOT}/datatype/Data[Tag].cpp
+    ${SRC_ROOT}/datatype/Data[Topology].cpp 
+    ${SRC_ROOT}/datatype/Data[TopologyChange].cpp    
+    ${SRC_ROOT}/datatype/Data[Vec].cpp
     ${SRC_ROOT}/loader/BaseLoader.cpp
     ${SRC_ROOT}/loader/MeshLoader.cpp
     ${SRC_ROOT}/loader/SceneLoader.cpp
@@ -254,7 +291,6 @@ set(SOURCE_FILES
     ${SRC_ROOT}/objectmodel/Context.cpp
     ${SRC_ROOT}/objectmodel/ContextObject.cpp
     ${SRC_ROOT}/objectmodel/DDGNode.cpp
-    ${SRC_ROOT}/objectmodel/Data.cpp
     ${SRC_ROOT}/objectmodel/DataCallback.cpp
     ${SRC_ROOT}/objectmodel/DataContentValue.cpp
     ${SRC_ROOT}/objectmodel/DataFileName.cpp
@@ -278,6 +314,8 @@ set(SOURCE_FILES
     ${SRC_ROOT}/topology/TopologicalMapping.cpp
     ${SRC_ROOT}/topology/Topology.cpp
     ${SRC_ROOT}/topology/TopologyChange.cpp
+    ${SRC_ROOT}/topology/TopologyChangeClasses.cpp
+    ${SRC_ROOT}/topology/TopologyElement.cpp
     ${SRC_ROOT}/topology/TopologyHandler.cpp
     ${SRC_ROOT}/topology/TopologySubsetIndices.cpp
     ${SRC_ROOT}/visual/DisplayFlags.cpp

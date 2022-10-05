@@ -24,6 +24,8 @@
 #include <sofa/helper/BackTrace.h>
 #include <sofa/helper/StringUtils.h>
 #include <sofa/helper/logging/Messaging.h>
+#include <sofa/defaulttype/AbstractTypeInfo.h>
+#include <sofa/defaulttype/TypeInfoRegistry.h>
 
 namespace sofa::core::objectmodel
 {
@@ -98,8 +100,10 @@ bool BaseData::validParent(const BaseData* parent)
     if (this->getValueTypeInfo()->ValidInfo() && parent->getValueTypeInfo()->ValidInfo())
         return true;
 
+    auto stringType = sofa::defaulttype::TypeInfoRegistry::Get(sofa::defaulttype::TypeInfoId::GetTypeId<std::string>());
+
     /// If not, check if one of the data is a simple string
-    if (this->getValueTypeInfo()->name() == defaulttype::DataTypeInfo<std::string>::name() || parent->getValueTypeInfo()->name() == defaulttype::DataTypeInfo<std::string>::name())
+    if (this->getValueTypeInfo() == stringType || parent->getValueTypeInfo() == stringType)
         return true;
 
     return false;
@@ -213,8 +217,10 @@ bool BaseData::genericCopyValueFrom(const BaseData* parent)
     const defaulttype::AbstractTypeInfo* dataInfo = this->getValueTypeInfo();
     const defaulttype::AbstractTypeInfo* parentInfo = parent->getValueTypeInfo();
 
+    auto stringType = sofa::defaulttype::TypeInfoRegistry::Get(sofa::defaulttype::TypeInfoId::GetTypeId<std::string>());
+
     // Check if one of the data is a simple string
-    if (this->getValueTypeInfo()->name() == defaulttype::DataTypeInfo<std::string>::name() || parent->getValueTypeInfo()->name() == defaulttype::DataTypeInfo<std::string>::name())
+    if (this->getValueTypeInfo() == stringType || parent->getValueTypeInfo() == stringType)
     {
         std::string text = parent->getValueString();
         return this->read(text);

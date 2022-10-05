@@ -22,7 +22,8 @@
 #pragma once
 
 #include <sofa/core/config.h>
-#include <sofa/defaulttype/typeinfo/TypeInfo_Text.h>
+#include <ostream>
+#include <set>
 
 namespace sofa::core::objectmodel
 {
@@ -64,16 +65,6 @@ protected:
     int id;
 };
 
-} //namespace sofa::core::objectmodel
+} // namespace sofa::core::objectmodel
 
-// Specialization of the defaulttype::DataTypeInfo type traits template
-namespace sofa::defaulttype
-{
 
-template<>
-struct DataTypeInfo< sofa::core::objectmodel::Tag > : public TextTypeInfo<sofa::core::objectmodel::Tag >
-{
-    static const char* name() { return "Tag"; }
-};
-
-} //namespace sofa::defaulttype

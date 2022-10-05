@@ -21,6 +21,7 @@
 ******************************************************************************/
 #include <sofa/core/objectmodel/DataCallback.h>
 #include <sofa/core/objectmodel/BaseData.h>
+#include <sofa/helper/logging/Messaging.h>
 
 namespace sofa
 {
