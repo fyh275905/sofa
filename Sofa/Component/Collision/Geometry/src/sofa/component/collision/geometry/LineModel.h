@@ -113,7 +113,7 @@ public:
     static_assert(std::is_same_v<typename Element::Coord, Coord>, "Data mismatch");
     friend class TLine<DataTypes>;
 
-    void init() override;
+    void doBaseObjectInit() override;
 
     // -- CollisionModel interface
 

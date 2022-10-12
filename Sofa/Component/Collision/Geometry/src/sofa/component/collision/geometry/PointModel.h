@@ -80,7 +80,7 @@ public:
 protected:
     PointCollisionModel();
 public:
-    void init() override;
+    void doBaseObjectInit() override;
 
     // -- CollisionModel interface
 
