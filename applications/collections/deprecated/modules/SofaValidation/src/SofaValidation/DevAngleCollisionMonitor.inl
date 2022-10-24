@@ -21,9 +21,17 @@
 ******************************************************************************/
 #include <SofaValidation/DevAngleCollisionMonitor.h>
 #include <sofa/core/visual/VisualParams.h>
+#include <sofa/core/TypeDeductionRules.h>
 
 namespace sofa::component::misc
 {
+
+template< class DataTypes >
+std::string DevAngleCollisionMonitor<DataTypes>::TemplateDeductionMethod(sofa::core::objectmodel::BaseContext* context,
+                                                                         sofa::core::objectmodel::BaseObjectDescription* args)
+{
+    return sofa::core::CopyTypeFromMechanicalState(context, args);
+}
 
 template <class DataTypes>
 DevAngleCollisionMonitor<DataTypes>::DevAngleCollisionMonitor()
@@ -32,6 +40,8 @@ DevAngleCollisionMonitor<DataTypes>::DevAngleCollisionMonitor()
     , surfaceCM(nullptr)
     , intersection(nullptr)
     , narrowPhaseDetection(nullptr)
+    , mstate1(initLink("object1", "link to the first state container to monitor"))
+    , mstate2(initLink("object2", "link to the second state container to monitor"))
 {
 }
 

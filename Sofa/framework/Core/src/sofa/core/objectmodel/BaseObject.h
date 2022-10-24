@@ -45,7 +45,6 @@ public:
 
 protected:
     BaseObject();
-
     ~BaseObject() override;
 
 public:
@@ -60,16 +59,16 @@ public:
     {
         return true;
     }
+    static bool RequiredLinkPathIsPointingToObjectOfType(const std::string& linkPath, const BaseClass* type, BaseContext*, BaseObjectDescription* arg);
+    static bool RequiredObjectIsInContext(const ClassInfo& typeOfRequiredObject, BaseContext* context, BaseObjectDescription* arg);
 
     /// Construction method called by ObjectFactory.
     template<class T>
-    static typename T::SPtr create(T*, BaseContext* context, BaseObjectDescription* arg)
+    static BaseObject::SPtr create(T*, BaseContext* context, BaseObjectDescription* arg)
     {
-        typename T::SPtr obj = sofa::core::objectmodel::New<T>();
-        if (context) context->addObject(obj);
-        if (arg) obj->parse(arg);
-        return obj;
+        return AddObjectToContextAndParse(sofa::core::objectmodel::New<T>(), context, arg);
     }
+    static BaseObject::SPtr AddObjectToContextAndParse(BaseObject::SPtr obj, BaseContext* context, BaseObjectDescription* arg);
 
     /// Parse the given description to assign values to this object's fields and potentially other parameters
     void parse ( BaseObjectDescription* arg ) override;

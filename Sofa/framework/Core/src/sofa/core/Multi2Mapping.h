@@ -215,43 +215,7 @@ public:
     /// It is for instance used in RigidMapping to get the local coordinates of the object.
     void disable() override;
 
-    /// Pre-construction check method called by ObjectFactory.
-    ///
-    /// This implementation read the object1 and object2 attributes and check
-    /// if they are compatible with the input and output models types of this
-    /// mapping.
-    template<class T>
-    static bool canCreate(T*& obj, core::objectmodel::BaseContext* context, core::objectmodel::BaseObjectDescription* arg)
-    {
-        std::string input1 = arg->getAttribute("input1","");
-        std::string input2 = arg->getAttribute("input2","");
-        std::string output = arg->getAttribute("output","");
-        if (!input1.empty() && !PathResolver::CheckPaths(context, LinkFromModels1::DestType::GetClass(), input1))
-            return false;
-        if (!input2.empty() && !PathResolver::CheckPaths(context, LinkFromModels2::DestType::GetClass(), input2))
-            return false;
-        if (output.empty() || !PathResolver::CheckPaths(context, LinkToModels::DestType::GetClass(), output))
-            return false;
-
-        return BaseMapping::canCreate(obj, context, arg);
-    }
-    /// Construction method called by ObjectFactory.
-    ///
-    /// This implementation read the input and output attributes to
-    /// find the input and output models of this mapping.
-    template<class T>
-    static typename T::SPtr create(T*, core::objectmodel::BaseContext* context, core::objectmodel::BaseObjectDescription* arg)
-    {
-        typename T::SPtr obj = sofa::core::objectmodel::New<T>();
-
-        if (context)
-            context->addObject(obj);
-
-        if (arg)
-            obj->parse(arg);
-
-        return obj;
-    }
+    static std::string TemplateDeductionMethod(sofa::core::objectmodel::BaseContext* , sofa::core::objectmodel::BaseObjectDescription*);
 
 protected:
     void getVecIn1Coord     (const MultiVecCoordId id,         type::vector<      In1DataVecCoord*> &v) const
