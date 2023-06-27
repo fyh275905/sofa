@@ -53,19 +53,13 @@ OglLabel::OglLabel():
     f_listening.setValue(true);
 }
 
-void OglLabel::parse(BaseObjectDescription *arg)
+void OglLabel::doBaseObjectParse(BaseObjectDescription *arg)
 {
     // BACKWARD COMPATIBILITY April 2017
     const char* value = arg->getAttribute("color") ;
     if(value==nullptr || strcmp(value, "contrast")){
-        VisualModel::parse(arg);
         return ;
     }
-
-    arg->setAttribute("selectContrastingColor", std::string("true"));
-    arg->removeAttribute("color") ;
-
-    VisualModel::parse(arg);
 
     /// A send the message after the parsing of the base class so that the "name" of the component
     /// is correctly reported in the message.
@@ -73,7 +67,8 @@ void OglLabel::parse(BaseObjectDescription *arg)
                      << "Using deprecated attributes may result in lower performance or un-expected behaviors" << msgendl
                      << "To remove this message you need to update your scene by replacing color='contrast' with "
                         " selectContrastingColor='true'" ;
-
+    d_selectContrastingColor.setValue(true);
+    d_color.setValue(RGBAColor::white());
 }
 
 void OglLabel::init()
