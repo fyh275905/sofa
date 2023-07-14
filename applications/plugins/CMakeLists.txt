@@ -51,6 +51,7 @@ sofa_add_subdirectory(plugin ConstraintGeometry ConstraintGeometry EXTERNAL)
 
 
 sofa_add_subdirectory(plugin PSL PSL EXPERIMENTAL)
+sofa_add_subdirectory(plugin BeamPlastic BeamPlastic)
 
 if((${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU") AND (${CMAKE_SYSTEM_NAME} MATCHES "Linux"))
     sofa_add_subdirectory(plugin SofaPardisoSolver SofaPardisoSolver) # SofaPardisoSolver is only available under linux with gcc
