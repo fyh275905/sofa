@@ -170,9 +170,15 @@ objectmodel::BaseObject::SPtr ObjectFactory::createObject(objectmodel::BaseConte
     if (it != registry.end()) // Found the classname
     {
         entry = it->second;
-        // If no template has been given or if the template does not exist, first try with the default one
+        // If no template has been given or if the template does not exist, first try to infer one from the context
         if(templatename.empty() || entry->creatorMap.find(templatename) == entry->creatorMap.end())
-            templatename = entry->defaultTemplate;
+            templatename = entry->getPreferredTemplate(context, arg);
+
+        // If template was neither provided by user or deduced from context create the first one in the list.
+        if(templatename.empty() || entry->creatorMap.find(templatename) == entry->creatorMap.end())
+        {
+            templatename = entry->creatorMap.begin()->first;
+        }
 
         CreatorMap::iterator it2 = entry->creatorMap.find(templatename);
         if (it2 != entry->creatorMap.end())
@@ -189,6 +195,8 @@ objectmodel::BaseObject::SPtr ObjectFactory::createObject(objectmodel::BaseConte
         // If object cannot be created with the given template (or the default one), try all possible ones
         if (creators.empty())
         {
+            msg_deprecated("ObjectFactory") << "Unable to deduce template from context for " << classname << ". Create the first one that match ! "
+                                                                                                             "This behavior is deprecated. Please fix your scene to set the template";
             CreatorMap::iterator it3;
             for (it3 = entry->creatorMap.begin(); it3 != entry->creatorMap.end(); ++it3)
             {
@@ -321,16 +329,16 @@ objectmodel::BaseObject::SPtr ObjectFactory::createObject(objectmodel::BaseConte
         if (isUserTemplateNameInTemplateList)
         {
             msg_error(object.get()) << "Requested template '" << usertemplatename << "' "
-                                      << "is not compatible with the current context. "
-                                      << "Falling back to the first compatible template: '"
-                                      << object->getTemplateName() << "'.";
+                                    << "is not compatible with the current context. "
+                                    << "Falling back to the first compatible template: '"
+                                    << object->getTemplateName() << "'.";
         }
         else
         {
             msg_error(object.get()) << "Requested template '" << usertemplatename << "' "
-                                      << "cannot be found in the list of available templates [" << ss.str() << "]. "
-                                      << "Falling back to the first compatible template: '"
-                                      << object->getTemplateName() << "'.";
+                                    << "cannot be found in the list of available templates [" << ss.str() << "]. "
+                                    << "Falling back to the first compatible template: '"
+                                    << object->getTemplateName() << "'.";
         }
     }
     else if (creators.size() > 1)
@@ -612,6 +620,13 @@ RegisterObject& RegisterObject::addCreator(std::string classname,
     return *this;
 }
 
+RegisterObject& RegisterObject::setTemplateDeductionMethod(std::function<std::string(sofa::core::objectmodel::BaseContext*,
+                                                                                     sofa::core::objectmodel::BaseObjectDescription*)> p)
+{
+    entry.deduceTemplate = p;
+    return *this;
+}
+
 RegisterObject::operator int()
 {
     if (entry.className.empty())
@@ -624,6 +639,7 @@ RegisterObject::operator int()
         reg.description += entry.description;
         reg.authors += entry.authors;
         reg.license += entry.license;
+        reg.deduceTemplate = entry.deduceTemplate;
         if (!entry.defaultTemplate.empty())
         {
             if (!reg.defaultTemplate.empty())

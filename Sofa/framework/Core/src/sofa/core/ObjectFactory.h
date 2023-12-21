@@ -28,6 +28,19 @@
 namespace sofa::core
 {
 
+template<class T>
+class HasTemplateDeductionMethod
+{
+    typedef char YesType[1];
+    typedef char NoType[2];
+
+    template<typename C> static YesType& test( decltype (&C::TemplateDeductionMethod) );
+    template<typename C> static NoType& test(...);
+
+public:
+    enum { value = sizeof(test<T>(0)) == sizeof(YesType) };
+};
+
 /**
  *  \brief Main class used to register and dynamically create objects
  *
@@ -87,6 +100,22 @@ public:
         std::string authors;
         std::string license;
         std::string defaultTemplate;
+
+        std::function<std::string(sofa::core::objectmodel::BaseContext*,
+                                  sofa::core::objectmodel::BaseObjectDescription*)> deduceTemplate {[](sofa::core::objectmodel::BaseContext*,
+                    sofa::core::objectmodel::BaseObjectDescription*)->std::string{return "";}};
+
+        std::string getPreferredTemplate(sofa::core::objectmodel::BaseContext *context,
+                                         sofa::core::objectmodel::BaseObjectDescription* args)
+        {
+            std::string contextBasedTemplate = deduceTemplate(context, args);
+
+            if(!contextBasedTemplate.empty())
+                return contextBasedTemplate;
+
+            return defaultTemplate;
+        }
+
         CreatorMap creatorMap;
         std::map<std::string, std::vector<std::string>> m_dataAlias ;
     };
@@ -306,6 +335,11 @@ public:
     /// Specify a list of authors (separated with spaces)
     RegisterObject& addAuthor(std::string val);
 
+    /// Specify a custom template deduction method. Provide one if you want a component to
+    /// be able to deduce its own template from its context;
+    RegisterObject& setTemplateDeductionMethod(std::function<std::string(sofa::core::objectmodel::BaseContext*,
+                                                                         sofa::core::objectmodel::BaseObjectDescription*)>);
+
     /// Specify a license (LGPL, GPL, ...)
     RegisterObject& addLicense(std::string val);
 
@@ -326,6 +360,11 @@ public:
 
         if (defaultTemplate)
             entry.defaultTemplate = templatename;
+
+        // if there is a custom deduction method in the class then we use it. This is often used
+        // to implement a single "per" class deduction system.
+        if constexpr ( HasTemplateDeductionMethod<RealObject>::value )
+                entry.deduceTemplate = RealObject::TemplateDeductionMethod;
 
         return addCreator(classname, templatename, ObjectFactory::Creator::SPtr(new ObjectCreator<RealObject>));
     }
