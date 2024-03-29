@@ -2007,8 +2007,10 @@ void MeshMatrixMass<DataTypes, GeometricalTypes>::clear()
 template <class DataTypes, class GeometricalTypes>
 void MeshMatrixMass<DataTypes, GeometricalTypes>::addMDx(const core::MechanicalParams*, DataVecDeriv& vres, const DataVecDeriv& vdx, SReal factor)
 {
-    if(this->d_componentState.getValue() != sofa::core::objectmodel::ComponentState::Valid)
+    if (!this->isComponentStateValid())
+    {
         return;
+    }
 
     const auto &vertexMass= d_vertexMass.getValue();
     const auto &edgeMass= d_edgeMass.getValue();
@@ -2074,8 +2076,10 @@ void MeshMatrixMass<DataTypes, GeometricalTypes>::addMDx(const core::MechanicalP
 template <class DataTypes, class GeometricalTypes>
 void MeshMatrixMass<DataTypes, GeometricalTypes>::accFromF(const core::MechanicalParams* mparams, DataVecDeriv& a, const DataVecDeriv& f)
 {
-    if(this->d_componentState.getValue() != sofa::core::objectmodel::ComponentState::Valid)
+    if (!this->isComponentStateValid())
+    {
         return;
+    }
 
     SOFA_UNUSED(mparams);
     if( !isLumped() )
@@ -2205,8 +2209,10 @@ void MeshMatrixMass<DataTypes, GeometricalTypes>::addGravityToV(const core::Mech
 template <class DataTypes, class GeometricalTypes>
 void MeshMatrixMass<DataTypes, GeometricalTypes>::addMToMatrix(const core::MechanicalParams *mparams, const sofa::core::behavior::MultiMatrixAccessor* matrix)
 {
-    if(this->d_componentState.getValue() != sofa::core::objectmodel::ComponentState::Valid)
+    if (!this->isComponentStateValid())
+    {
         return;
+    }
 
     const auto &vertexMass= d_vertexMass.getValue();
     const auto &edgeMass= d_edgeMass.getValue();
@@ -2292,8 +2298,10 @@ void MeshMatrixMass<DataTypes, GeometricalTypes>::addMToMatrix(const core::Mecha
 template <class DataTypes, class GeometricalTypes>
 void MeshMatrixMass<DataTypes, GeometricalTypes>::buildMassMatrix(sofa::core::behavior::MassMatrixAccumulator* matrices)
 {
-    if(this->d_componentState.getValue() != sofa::core::objectmodel::ComponentState::Valid)
+    if (!this->isComponentStateValid())
+    {
         return;
+    }
 
     const MassVector &vertexMass= d_vertexMass.getValue();
     const MassVector &edgeMass= d_edgeMass.getValue();
