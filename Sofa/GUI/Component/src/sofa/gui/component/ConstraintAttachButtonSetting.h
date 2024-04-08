@@ -19,14 +19,27 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#include <sofa/component/collision/response/contact/ContactIdentifier.h>
+#pragma once
 
-namespace sofa::component::collision::response::contact
+#include <sofa/gui/component/config.h>
+
+#include <sofa/core/objectmodel/ConfigurationSetting.h>
+#include <sofa/component/setting/MouseButtonSetting.h>
+
+namespace sofa::gui::component
 {
 
-ContactIdentifier::ContactIdentifier()
+/*****
+* This component modifies the mouse picking behavior in the GUI 
+* and set it at the beginning to Lagrangian-based contraints
+* It doesn't have any parameter because its only presence is sufficient.
+*****/
+class SOFA_GUI_COMPONENT_API ConstraintAttachButtonSetting: public sofa::component::setting::MouseButtonSetting
 {
-    id = cpt.fetch_add(1) ;
-}
+public:
+    SOFA_CLASS(ConstraintAttachButtonSetting,MouseButtonSetting);
+    std::string getOperationType() override {return "ConstraintAttach";}
 
-} //namespace sofa::component::collision::response::contact
+};
+
+} // namespace sofa::gui::component

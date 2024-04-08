@@ -19,14 +19,17 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#include <sofa/component/collision/response/contact/ContactIdentifier.h>
 
-namespace sofa::component::collision::response::contact
+#include <sofa/gui/component/ConstraintAttachButtonSetting.h>
+#include <sofa/core/visual/VisualParams.h>
+#include <sofa/core/ObjectFactory.h>
+
+namespace sofa::gui::component
 {
 
-ContactIdentifier::ContactIdentifier()
-{
-    id = cpt.fetch_add(1) ;
-}
+int ConstraintAttachButtonSettingClass = core::RegisterObject("Attach an object to the mouse using lagrangian multiplier")
+        .add< ConstraintAttachButtonSetting >();
 
-} //namespace sofa::component::collision::response::contact
+
+
+} // namespace sofa::gui::component
