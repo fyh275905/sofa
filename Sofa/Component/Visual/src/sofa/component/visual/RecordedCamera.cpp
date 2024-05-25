@@ -25,7 +25,6 @@
 #include <sofa/type/RGBAColor.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
-#include <sofa/core/objectmodel/KeypressedEvent.h>
 
 namespace sofa::component::visual
 {
@@ -306,12 +305,6 @@ void RecordedCamera::handleEvent(sofa::core::objectmodel::Event *event)
         if(d_navigationMode.getValue())
             this->moveCamera_navigation();
     }
-    else if (sofa::core::objectmodel::KeypressedEvent::checkEventType(event))
-    {
-        const sofa::core::objectmodel::KeypressedEvent* ke = static_cast<sofa::core::objectmodel::KeypressedEvent*>(event);
-        msg_info() <<" handleEvent gets character '" << ke->getKey() <<"'. ";
-    }
-
 }
 
 
