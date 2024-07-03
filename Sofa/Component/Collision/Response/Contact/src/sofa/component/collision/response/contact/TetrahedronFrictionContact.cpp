@@ -32,22 +32,41 @@ namespace sofa::component::collision::response::contact
 
 using namespace sofa::component::collision::geometry;
 
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>> > TetrahedronSphereFrictionContactClass("FrictionContactConstraint",true);
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>> > TetrahedronPointFrictionContactClass("FrictionContactConstraint",true);
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>> > TetrahedronLineFrictionContactClass("FrictionContactConstraint",true);
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>> > TetrahedronTriangleFrictionContactClass("FrictionContactConstraint",true);
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel> > TetrahedronTetrahedronFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB> > TetrahedronSphereFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB> > TetrahedronPointFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB> > TetrahedronLineFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB> > TetrahedronTriangleFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel,FrictionType::COULOMB> > TetrahedronTetrahedronFrictionContactClass("FrictionContactConstraint",true);
 
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>> > TetrahedronSpherePenalityFrictionContactClass("FrictionContactConstraint",true);
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>> > TetrahedronPointPenalityFrictionContactClass("FrictionContactConstraint",true);
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>> > TetrahedronLinePenalityFrictionContactClass("FrictionContactConstraint",true);
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>> > TetrahedronTrianglePenalityFrictionContactClass("FrictionContactConstraint",true);
-Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel> > TetrahedronTetrahedronPenalityFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB> > TetrahedronSpherePenalityFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB> > TetrahedronPointPenalityFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB> > TetrahedronLinePenalityFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB> > TetrahedronTrianglePenalityFrictionContactClass("FrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel,FrictionType::COULOMB> > TetrahedronTetrahedronPenalityFrictionContactClass("FrictionContactConstraint",true);
 
-template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>>;
-template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>>;
-template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>>;
-template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>>;
-template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::COULOMB>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel,FrictionType::COULOMB>;
+
+
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS> > TetrahedronSphereViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS> > TetrahedronPointViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS> > TetrahedronLineViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS> > TetrahedronTriangleViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel,FrictionType::VISCOUS> > TetrahedronTetrahedronViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS> > TetrahedronSpherePenalityViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS> > TetrahedronPointPenalityViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS> > TetrahedronLinePenalityViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS> > TetrahedronTrianglePenalityViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+Creator<Contact::Factory, FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel,FrictionType::VISCOUS> > TetrahedronTetrahedronPenalityViscousFrictionContactClass("ViscousFrictionContactConstraint",true);
+
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, SphereCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, PointCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, LineCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, TriangleCollisionModel<sofa::defaulttype::Vec3Types>,FrictionType::VISCOUS>;
+template class SOFA_COMPONENT_COLLISION_RESPONSE_CONTACT_API response::contact::FrictionContact<TetrahedronCollisionModel, TetrahedronCollisionModel,FrictionType::VISCOUS>;
 
 }  // namespace sofa::component::collision::response::contact

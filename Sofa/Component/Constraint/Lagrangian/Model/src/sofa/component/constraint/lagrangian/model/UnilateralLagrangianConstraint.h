@@ -34,11 +34,19 @@
 namespace sofa::component::constraint::lagrangian::model
 {
 
-template<class DataTypes>
+
+enum FrictionType
+{
+    COULOMB,
+    VISCOUS
+};
+
+
+template<class DataTypes, FrictionType frictionType>
 class UnilateralLagrangianConstraint : public core::behavior::PairInteractionConstraint<DataTypes>
 {
 public:
-    SOFA_CLASS(SOFA_TEMPLATE(UnilateralLagrangianConstraint,DataTypes), SOFA_TEMPLATE(core::behavior::PairInteractionConstraint,DataTypes));
+    SOFA_CLASS(SOFA_TEMPLATE2(UnilateralLagrangianConstraint,DataTypes,frictionType), SOFA_TEMPLATE(core::behavior::PairInteractionConstraint,DataTypes));
 
     typedef typename DataTypes::VecCoord VecCoord;
     typedef typename DataTypes::VecDeriv VecDeriv;
@@ -151,7 +159,8 @@ public:
 
 
 #if !defined(SOFA_COMPONENT_CONSTRAINTSET_UNILATERALLAGRANGIANCONSTRAINT_CPP)
-extern template class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralLagrangianConstraint<defaulttype::Vec3Types>;
+extern template class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralLagrangianConstraint<defaulttype::Vec3Types,FrictionType::COULOMB>;
+extern template class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralLagrangianConstraint<defaulttype::Vec3Types,FrictionType::VISCOUS>;
 #endif
 
 

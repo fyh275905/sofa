@@ -22,6 +22,7 @@
 #pragma once
 #include <sofa/component/constraint/lagrangian/model/UnilateralLagrangianConstraint.h>
 #include <sofa/core/ConstraintParams.h>
+#include <sofa/core/behavior/ConstraintResolution.h>
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/type/Vec.h>
 #include <sofa/type/RGBAColor.h>
@@ -29,8 +30,8 @@
 namespace sofa::component::constraint::lagrangian::model
 {
 
-template<class DataTypes>
-UnilateralLagrangianConstraint<DataTypes>::UnilateralLagrangianConstraint(MechanicalState* object1, MechanicalState* object2)
+template<class DataTypes, FrictionType frictionType>
+UnilateralLagrangianConstraint<DataTypes, frictionType>::UnilateralLagrangianConstraint(MechanicalState* object1, MechanicalState* object2)
     : Inherit(object1, object2)
     , epsilon(Real(0.001))
     , yetIntegrated(false)
@@ -39,23 +40,23 @@ UnilateralLagrangianConstraint<DataTypes>::UnilateralLagrangianConstraint(Mechan
 {
 }
 
-template<class DataTypes>
-UnilateralLagrangianConstraint<DataTypes>::~UnilateralLagrangianConstraint()
+template<class DataTypes, FrictionType frictionType>
+UnilateralLagrangianConstraint<DataTypes, frictionType>::~UnilateralLagrangianConstraint()
 {
     if(contactsStatus)
         delete[] contactsStatus;
 }
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::clear(int reserve)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::clear(int reserve)
 {
     contacts.clear();
     if (reserve)
         contacts.reserve(reserve);
 }
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::addContact(SReal mu, Deriv norm, Coord P, Coord Q, Real contactDistance, int m1, int m2, long id, PersistentID localid)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::addContact(SReal mu, Deriv norm, Coord P, Coord Q, Real contactDistance, int m1, int m2, long id, PersistentID localid)
 {
     addContact(mu, norm, P, Q, contactDistance, m1, m2,
             this->getMState2()->read(core::ConstVecCoordId::freePosition())->getValue()[m2],
@@ -63,8 +64,8 @@ void UnilateralLagrangianConstraint<DataTypes>::addContact(SReal mu, Deriv norm,
             id, localid);
 }
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::addContact(SReal mu, Deriv norm, Real contactDistance, int m1, int m2, long id, PersistentID localid)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::addContact(SReal mu, Deriv norm, Real contactDistance, int m1, int m2, long id, PersistentID localid)
 {
     addContact(mu, norm,
             this->getMState2()->read(core::ConstVecCoordId::position())->getValue()[m2],
@@ -75,8 +76,8 @@ void UnilateralLagrangianConstraint<DataTypes>::addContact(SReal mu, Deriv norm,
             id, localid);
 }
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::addContact(SReal mu, Deriv norm, Coord P, Coord Q, Real contactDistance, int m1, int m2, Coord /*Pfree*/, Coord /*Qfree*/, long id, PersistentID localid)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::addContact(SReal mu, Deriv norm, Coord P, Coord Q, Real contactDistance, int m1, int m2, Coord /*Pfree*/, Coord /*Qfree*/, long id, PersistentID localid)
 {
     contacts.resize(contacts.size() + 1);
     Contact &c = contacts.back();
@@ -97,8 +98,8 @@ void UnilateralLagrangianConstraint<DataTypes>::addContact(SReal mu, Deriv norm,
 }
 
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::buildConstraintMatrix(const core::ConstraintParams *, DataMatrixDeriv &c1_d, DataMatrixDeriv &c2_d, unsigned int &contactId
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::buildConstraintMatrix(const core::ConstraintParams *, DataMatrixDeriv &c1_d, DataMatrixDeriv &c2_d, unsigned int &contactId
         , const DataVecCoord &, const DataVecCoord &)
 {
     assert(this->mstate1);
@@ -176,8 +177,8 @@ void UnilateralLagrangianConstraint<DataTypes>::buildConstraintMatrix(const core
 }
 
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::getPositionViolation(linearalgebra::BaseVector *v)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::getPositionViolation(linearalgebra::BaseVector *v)
 {
     const VecCoord &PfreeVec = this->getMState2()->read(core::ConstVecCoordId::freePosition())->getValue();
     const VecCoord &QfreeVec = this->getMState1()->read(core::ConstVecCoordId::freePosition())->getValue();
@@ -256,8 +257,8 @@ void UnilateralLagrangianConstraint<DataTypes>::getPositionViolation(linearalgeb
 }
 
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::getVelocityViolation(linearalgebra::BaseVector *v)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::getVelocityViolation(linearalgebra::BaseVector *v)
 {
     auto P = this->getMState2()->readPositions();
     auto Q = this->getMState1()->readPositions();
@@ -289,8 +290,8 @@ void UnilateralLagrangianConstraint<DataTypes>::getVelocityViolation(linearalgeb
 }
 
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::getConstraintViolation(const core::ConstraintParams *cparams, linearalgebra::BaseVector *v, const DataVecCoord &, const DataVecCoord &
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::getConstraintViolation(const core::ConstraintParams *cparams, linearalgebra::BaseVector *v, const DataVecCoord &, const DataVecCoord &
         , const DataVecDeriv &, const DataVecDeriv &)
 {
     switch (cparams->constOrder())
@@ -312,8 +313,8 @@ void UnilateralLagrangianConstraint<DataTypes>::getConstraintViolation(const cor
 }
 
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::getConstraintInfo(const core::ConstraintParams*, VecConstraintBlockInfo& blocks, VecPersistentID& ids, VecConstCoord& /*positions*/, VecConstDeriv& directions, VecConstArea& /*areas*/)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::getConstraintInfo(const core::ConstraintParams*, VecConstraintBlockInfo& blocks, VecPersistentID& ids, VecConstCoord& /*positions*/, VecConstDeriv& directions, VecConstArea& /*areas*/)
 {
     if (contacts.empty()) return;
     const bool friction = (contacts[0].mu > 0.0); /// @todo: can there be both friction-less and friction contacts in the same UnilateralLagrangianConstraint ???
@@ -344,8 +345,8 @@ void UnilateralLagrangianConstraint<DataTypes>::getConstraintInfo(const core::Co
     blocks.push_back(info);
 }
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::getConstraintResolution(const core::ConstraintParams *, std::vector<core::behavior::ConstraintResolution*>& resTab, unsigned int& offset)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::getConstraintResolution(const core::ConstraintParams *, std::vector<core::behavior::ConstraintResolution*>& resTab, unsigned int& offset)
 {
     if(contactsStatus)
     {
@@ -364,7 +365,12 @@ void UnilateralLagrangianConstraint<DataTypes>::getConstraintResolution(const co
         Contact& c = contacts[i];
         if(c.mu > 0.0)
         {
-            UnilateralConstraintResolutionWithFriction* ucrwf = new UnilateralConstraintResolutionWithFriction(c.mu, nullptr, &contactsStatus[i]);
+            core::behavior::ConstraintResolution* ucrwf;
+            if(frictionType == FrictionType::COULOMB)
+                 ucrwf = new UnilateralConstraintResolutionWithFriction(c.mu, nullptr, &contactsStatus[i]);
+            else
+                 ucrwf = new UnilateralConstraintResolutionWithViscousFriction(c.mu, this->getContext()->getDt(),nullptr, &contactsStatus[i]);
+
             ucrwf->setTolerance(customTolerance);
             resTab[offset] = ucrwf;
 
@@ -376,8 +382,8 @@ void UnilateralLagrangianConstraint<DataTypes>::getConstraintResolution(const co
     }
 }
 
-template<class DataTypes>
-bool UnilateralLagrangianConstraint<DataTypes>::isActive() const
+template<class DataTypes, FrictionType frictionType>
+bool UnilateralLagrangianConstraint<DataTypes, frictionType>::isActive() const
 {
     for(unsigned int i = 0; i < contacts.size(); i++)
         if(contacts[i].dfree < 0)
@@ -386,8 +392,8 @@ bool UnilateralLagrangianConstraint<DataTypes>::isActive() const
     return false;
 }
 
-template<class DataTypes>
-void UnilateralLagrangianConstraint<DataTypes>::draw(const core::visual::VisualParams* vparams)
+template<class DataTypes, FrictionType frictionType>
+void UnilateralLagrangianConstraint<DataTypes, frictionType>::draw(const core::visual::VisualParams* vparams)
 {
     if (!vparams->displayFlags().getShowInteractionForceFields()) return;
 
