@@ -366,7 +366,7 @@ void UnilateralLagrangianConstraint<DataTypes, frictionType>::getConstraintResol
         if(c.mu > 0.0)
         {
             core::behavior::ConstraintResolution* ucrwf;
-            if(frictionType == FrictionType::COULOMB)
+            if constexpr(frictionType == FrictionType::COULOMB)
                  ucrwf = new UnilateralConstraintResolutionWithFriction(c.mu, nullptr, &contactsStatus[i]);
             else
                  ucrwf = new UnilateralConstraintResolutionWithViscousFriction(c.mu, this->getContext()->getDt(),nullptr, &contactsStatus[i]);
