@@ -147,8 +147,8 @@ void UnilateralConstraintResolutionWithViscousFriction::resolution(int line, SRe
     
     d[line+1] += _W[1] * (force[line]-f[0]);
     d[line+2] += _W[2] * (force[line]-f[0]);
-    force[line+1] -= _mu*m_dt*d[line+1] / lumped_W ;
-    force[line+2] -= _mu*m_dt*d[line+2] / lumped_W ;
+    force[line+1] -= _mu*d[line+1];
+    force[line+2] -= _mu*d[line+2];
 }
 
 void UnilateralConstraintResolutionWithViscousFriction::store(int line, SReal* force, bool /*convergence*/)

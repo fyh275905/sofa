@@ -2,7 +2,7 @@ import sys
 import os
 import Sofa
 
-dirname = '~/workspace/sofa/benchmark'
+dirname = '/home/alexandre/workspace/sofa/src/sofa/benchmark'
 def createScene(rootNode, dt=0.01, m=1, alpha=1, g=1):
 
     # rootNode
@@ -73,7 +73,7 @@ def createScene(rootNode, dt=0.01, m=1, alpha=1, g=1):
     # rootNode/Floor
     Floor = rootNode.addChild('Floor')
     Floor = Floor
-    Floor.addObject('TriangleSetTopologyContainer', name='FloorTopology', position='-20 -15 -2  1000 -15 -2  1000 15 -2  -20 15 -2', triangles='0 2 1  0 3 2')
+    Floor.addObject('TriangleSetTopologyContainer', name='FloorTopology', position='-20 -15 -2  50000 -15 -2  50000 15 -2  -20 15 -2', triangles='0 2 1  0 3 2')
     Floor.addObject('MechanicalObject', name='FloorDOF', template='Vec3d')
     Floor.addObject('TriangleCollisionModel', name='FloorCM', proximity='0.002', moving='0', simulated='0', color='0.3 0.3 0.3 0.1')
     Floor.addObject('OglModel', name='VisualModel', src='@FloorTopology')
@@ -140,8 +140,8 @@ def limit_speed_as_a_function_of_m_and_alpha():
 
     g = 1
     N = 10
-    masses = np.logspace(-2,1.2,N)
-    alphas = np.logspace(0,1,N)
+    masses = np.logspace(-1,.8,N)
+    alphas = np.logspace(0,.8,N)
     limitSpeeds = np.zeros((N,N))
     for i, m in enumerate(masses):
         print('m = ', m)
@@ -158,7 +158,7 @@ def limit_speed_as_a_function_of_m_and_alpha():
                 Sofa.Simulation.animate(root, root.dt.value)
                 currentVelocity = root.Box.BoxDOF.velocity.value[0][0]
                 err =  abs((currentVelocity-previousVelocity)/previousVelocity)
-                if err < 1e-9:
+                if err < 1e-5:
                     limitSpeeds[i,j] = currentVelocity
                     break
                 previousVelocity = currentVelocity
@@ -191,7 +191,7 @@ def limit_speed_as_a_function_of_m_and_g():
 
     alpha = 1
     N = 10
-    masses = np.logspace(-2,1.2,N)
+    masses = np.logspace(-1,.8,N)
     gs = np.logspace(-1,1,N)
     limitSpeeds = np.zeros((N,N))
     for i, m in enumerate(masses):
@@ -209,7 +209,7 @@ def limit_speed_as_a_function_of_m_and_g():
                 Sofa.Simulation.animate(root, root.dt.value)
                 currentVelocity = root.Box.BoxDOF.velocity.value[0][0]
                 err =  abs((currentVelocity-previousVelocity)/previousVelocity)
-                if err < 1e-9:
+                if err < 1e-5:
                     limitSpeeds[i,j] = currentVelocity
                     break
                 previousVelocity = currentVelocity
@@ -236,9 +236,49 @@ def limit_speed_as_a_function_of_m_and_g():
     plt.savefig(os.path.join(dirname, 'v_lim_against_g_m.png'))
     plt.show()
 
+def limit_speed_accuracy():
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    N = 3
+    masses = np.logspace(-1,.8,N)
+    gs = np.logspace(-1,1,N)
+    alphas = np.logspace(0,.8,N)
+    limitSpeeds = []
+    for m in masses:
+        print('m = ', m)
+        for alpha in alphas:
+            print('\talpha = ', alpha)
+            for g in gs:
+                root = Sofa.Core.Node("root")
+
+                createScene(root, dt=1e-4, m=m, alpha=alpha, g=g)
+
+                Sofa.Simulation.init(root)
+
+                previousVelocity = 1.
+                theoreticalVelocity = m*g/alpha
+                while True:
+                    Sofa.Simulation.animate(root, root.dt.value)
+                    currentVelocity = root.Box.BoxDOF.velocity.value[0][0]
+                    err =  abs((currentVelocity-previousVelocity)/previousVelocity)
+                    if err < 1e-9:
+                        limitSpeeds.append([theoreticalVelocity,currentVelocity])
+                        break
+                    previousVelocity = currentVelocity
+                    print('\r\t\tg = ', g, f'error = {err:.2e}', end='')
+                print()
+    limitSpeeds = np.array(limitSpeeds)
+    plt.plot(limitSpeeds[:,0])
+    plt.plot(limitSpeeds[:,1])
+    plt.show()
+    plt.figure()
+    plt.boxplot((limitSpeeds[:,1]-limitSpeeds[:,0])/(1e-12+limitSpeeds[:,0]))
+    plt.show()
 
 # Function used only if this script is called from a python environment
 if __name__ == '__main__':
-    error_as_a_function_of_dt()
-    limit_speed_as_a_function_of_m_and_alpha()
-    limit_speed_as_a_function_of_m_and_g()
+    # error_as_a_function_of_dt()
+    # limit_speed_as_a_function_of_m_and_alpha()
+    # limit_speed_as_a_function_of_m_and_g()
+    limit_speed_accuracy()
