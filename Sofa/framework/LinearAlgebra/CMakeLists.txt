@@ -13,8 +13,6 @@ set(HEADER_FILES
     ${SOFALINEARALGEBRASRC_ROOT}/BaseVector.h
     ${SOFALINEARALGEBRASRC_ROOT}/BlockFullMatrix.h
     ${SOFALINEARALGEBRASRC_ROOT}/BlockFullMatrix.inl
-    ${SOFALINEARALGEBRASRC_ROOT}/BlocFullMatrix.h
-    ${SOFALINEARALGEBRASRC_ROOT}/BlocFullMatrix.inl
     ${SOFALINEARALGEBRASRC_ROOT}/BlockDiagonalMatrix.h
     ${SOFALINEARALGEBRASRC_ROOT}/BlockDiagonalMatrix.inl
     ${SOFALINEARALGEBRASRC_ROOT}/BlockVector.h
@@ -62,9 +60,9 @@ set(SOURCE_FILES
     ${SOFALINEARALGEBRASRC_ROOT}/init.cpp
 )
 
-sofa_find_package(Eigen3 REQUIRED)
+sofa_find_package(Eigen3 3.3.5 REQUIRED)
 
-if (SOFA_OPENMP AND "${EIGEN3_VERSION}" VERSION_LESS 3.2.10)
+if (SOFA_OPENMP)
     sofa_find_package(OpenMP BOTH_SCOPES) # will set/update SOFA_LINEARALGEBRA_HAVE_OPENMP
 endif()
 
