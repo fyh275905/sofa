@@ -19,9 +19,9 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#define SOFA_COMPONENT_FORCEFIELD_UNIFORMVELOCITYDAMPINGFORCEFIELD_CPP
+#define SOFA_COMPONENT_FORCEFIELD_NODALLINEARDAMPINGFORCEFIELD_CPP
 
-#include <sofa/component/mechanicalload/UniformVelocityDampingForceField.inl>
+#include <sofa/component/mechanicalload/NodalLinearDampingForceField.inl>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/defaulttype/VecTypes.h>
 #include <sofa/defaulttype/RigidTypes.h>
@@ -31,23 +31,21 @@ namespace sofa::component::mechanicalload
 
 using namespace sofa::defaulttype;
 
-int UniformVelocityDampingForceFieldClass = core::RegisterObject("Uniform velocity damping")
-.add< UniformVelocityDampingForceField<Vec3Types> >()
-.add< UniformVelocityDampingForceField<Vec2Types> >()
-.add< UniformVelocityDampingForceField<Vec1Types> >()
-.add< UniformVelocityDampingForceField<Vec6Types> >()
-.add< UniformVelocityDampingForceField<Rigid3Types> >()
-.add< UniformVelocityDampingForceField<Rigid2Types> >()
+int NodalLinearDampingForceFieldClass = core::RegisterObject("Linear damping force applied on the degrees of freedom")
+.add< NodalLinearDampingForceField<Vec3Types> >()
+.add< NodalLinearDampingForceField<Vec2Types> >()
+.add< NodalLinearDampingForceField<Vec1Types> >()
+.add< NodalLinearDampingForceField<Vec6Types> >()
+.add< NodalLinearDampingForceField<Rigid3Types> >()
+.add< NodalLinearDampingForceField<Rigid2Types> >()
 
 ;
 
-
-    template class SOFA_COMPONENT_MECHANICALLOAD_API UniformVelocityDampingForceField<Vec3Types>;
-    template class SOFA_COMPONENT_MECHANICALLOAD_API UniformVelocityDampingForceField<Vec2Types>;
-    template class SOFA_COMPONENT_MECHANICALLOAD_API UniformVelocityDampingForceField<Vec1Types>;
-    template class SOFA_COMPONENT_MECHANICALLOAD_API UniformVelocityDampingForceField<Vec6Types>;
-    template class SOFA_COMPONENT_MECHANICALLOAD_API UniformVelocityDampingForceField<Rigid3Types>;
-    template class SOFA_COMPONENT_MECHANICALLOAD_API UniformVelocityDampingForceField<Rigid2Types>;
-
+template class SOFA_COMPONENT_MECHANICALLOAD_API NodalLinearDampingForceField<Vec3Types>;
+template class SOFA_COMPONENT_MECHANICALLOAD_API NodalLinearDampingForceField<Vec2Types>;
+template class SOFA_COMPONENT_MECHANICALLOAD_API NodalLinearDampingForceField<Vec1Types>;
+template class SOFA_COMPONENT_MECHANICALLOAD_API NodalLinearDampingForceField<Vec6Types>;
+template class SOFA_COMPONENT_MECHANICALLOAD_API NodalLinearDampingForceField<Rigid3Types>;
+template class SOFA_COMPONENT_MECHANICALLOAD_API NodalLinearDampingForceField<Rigid2Types>;
 
 } // namespace sofa::component::mechanicalload
