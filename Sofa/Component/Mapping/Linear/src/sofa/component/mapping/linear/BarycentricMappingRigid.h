@@ -37,6 +37,8 @@
 #include <sofa/component/mapping/linear/BarycentricMappers/BarycentricMapperMeshTopology.h>
 #include <sofa/defaulttype/RigidTypes.h>
 
+#include <sofa/core/objectmodel/RenamedData.h>
+
 namespace sofa::component::mapping::linear
 {
 
@@ -67,8 +69,14 @@ public:
     using Index = sofa::Index;
 
 protected:
-    core::topology::PointData< sofa::type::vector<MappingData > >  map; ///< mapper data
-    core::topology::PointData< sofa::type::vector<MappingOrientData > >  mapOrient; ///< mapper data for mapped frames
+    SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_MAPPING_LINEAR()
+    sofa::core::objectmodel::RenamedData<sofa::type::vector<MappingData >> map;
+
+    SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_MAPPING_LINEAR()
+    sofa::core::objectmodel::RenamedData<sofa::type::vector<MappingOrientData >>  mapOrient;
+
+    core::topology::PointData< sofa::type::vector<MappingData > >  d_map; ///< mapper data
+    core::topology::PointData< sofa::type::vector<MappingOrientData > >  d_mapOrient; ///< mapper data for mapped frames
 
     VecCoord actualTetraPosition;
 

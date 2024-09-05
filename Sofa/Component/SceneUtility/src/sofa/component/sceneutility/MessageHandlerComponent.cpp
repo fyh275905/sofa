@@ -99,12 +99,12 @@ void MessageHandlerComponent::parse ( core::objectmodel::BaseObjectDescription* 
     m_isValid = true ;
 }
 
-int MessageHandlerComponentClass = RegisterObject("This object controls the way Sofa print's "
-                                                  "info/warning/error/fatal messages. ")
-        .add< MessageHandlerComponent >()
-        ;
-
-
+void registerMessageHandlerComponent(sofa::core::ObjectFactory* factory)
+{
+    factory->registerObjects(core::ObjectRegistrationData("This object controls the way Sofa print's "
+                                                          "info/warning/error/fatal messages. ")
+        .add< MessageHandlerComponent >());
+}
 
 ////////////////////////// FileMessageHandlerComponent ////////////////////////////////////
 FileMessageHandlerComponent::FileMessageHandlerComponent() :
@@ -115,9 +115,11 @@ FileMessageHandlerComponent::FileMessageHandlerComponent() :
 
 FileMessageHandlerComponent::~FileMessageHandlerComponent()
 {
-    MessageDispatcher::rmHandler(m_handler) ;
-
-    delete m_handler ;
+    if (m_handler)
+    {
+        MessageDispatcher::rmHandler(m_handler) ;
+        delete m_handler ;
+    }
 }
 
 void FileMessageHandlerComponent::parse ( core::objectmodel::BaseObjectDescription* arg )

@@ -98,10 +98,11 @@ std::string lookForValidCompareStateFile( const std::string& sceneName,
 
 }
 
-
-
-int CompareStateClass = core::RegisterObject("Compare State vectors from a reference frame to the associated Mechanical State")
-        .add< CompareState >();
+void registerCompareState(sofa::core::ObjectFactory* factory)
+{
+    factory->registerObjects(core::ObjectRegistrationData("Compare State vectors from a reference frame to the associated Mechanical State.")
+        .add< CompareState >());
+}
 
 CompareState::CompareState(): ReadState()
 {
@@ -176,6 +177,8 @@ void CompareState::processCompareState()
 //-------------------------------- processCompareState------------------------------------
 void CompareState::draw(const core::visual::VisualParams* vparams)
 {
+    const auto stateLifeCycle = vparams->drawTool()->makeStateLifeCycle();
+
     SReal time = getContext()->getTime() + d_shift.getValue();
     time += getContext()->getDt() * 0.001;
     //lastTime = time+0.00001;

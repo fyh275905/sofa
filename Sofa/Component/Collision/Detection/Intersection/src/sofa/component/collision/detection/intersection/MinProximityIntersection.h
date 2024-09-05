@@ -24,6 +24,8 @@
 
 #include <sofa/component/collision/detection/intersection/BaseProximityIntersection.h>
 
+#include <sofa/core/objectmodel/RenamedData.h>
+
 namespace sofa::component::collision::detection::intersection
 {
 
@@ -37,28 +39,45 @@ namespace sofa::component::collision::detection::intersection
  * - Cube/Cube
  * - Sphere/Sphere (rigid or vec3)
  * MeshMinProximityIntersection adds support for:
- * - Point/Point (if usePointPoint is true)
- * - Line/Point (if useLinePoint is true)
- * - Line/Line (if useLineLine is true)
+ * - Point/Point (if d_usePointPoint is true)
+ * - Line/Point (if d_useLinePoint is true)
+ * - Line/Line (if d_useLineLine is true)
  * - Triangle/Point
- * - Sphere/Point (if useSphereTriangle is true)
- * - RigidSphere/Point (if useSphereTriangle is true)
- * - Triangle/Sphere (if useSphereTriangle is true)
- * - Triangle/RigidSphere (if useSphereTriangle is true)
- * - Line/Sphere (if useSphereTriangle is true)
- * - Line/RigidSphere (if useSphereTriangle is true)
+ * - Sphere/Point (if d_useSphereTriangle is true)
+ * - RigidSphere/Point (if d_useSphereTriangle is true)
+ * - Triangle/Sphere (if d_useSphereTriangle is true)
+ * - Triangle/RigidSphere (if d_useSphereTriangle is true)
+ * - Line/Sphere (if d_useSphereTriangle is true)
+ * - Line/RigidSphere (if d_useSphereTriangle is true)
  * Note that MeshMinProximityIntersection ignores Triangle/Line and Triangle/Triangle intersections.
- * Datas can be set to ignore some pairs of collision models (useSphereTriangle, usePointPoint, etc).
+ * Datas can be set to ignore some pairs of collision models (d_useSphereTriangle, d_usePointPoint, etc).
  */
 class SOFA_COMPONENT_COLLISION_DETECTION_INTERSECTION_API MinProximityIntersection : public BaseProximityIntersection
 {
 public:
     SOFA_CLASS(MinProximityIntersection,BaseProximityIntersection);
-    Data<bool> useSphereTriangle; ///< activate Sphere-Triangle intersection tests
-    Data<bool> usePointPoint; ///< activate Point-Point intersection tests
-    Data<bool> useSurfaceNormals; ///< Compute the norms of the Detection Outputs by considering the normals of the surfaces involved.
-    Data<bool> useLinePoint; ///< activate Line-Point intersection tests
-    Data<bool> useLineLine; ///< activate Line-Line  intersection tests
+    SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_COLLISION_DETECTION_INTERSECTION()
+    sofa::core::objectmodel::RenamedData<bool> useSphereTriangle;
+
+    SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_COLLISION_DETECTION_INTERSECTION()
+    sofa::core::objectmodel::RenamedData<bool> usePointPoint;
+
+    SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_COLLISION_DETECTION_INTERSECTION()
+    sofa::core::objectmodel::RenamedData<bool> useSurfaceNormals;
+
+    SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_COLLISION_DETECTION_INTERSECTION()
+    sofa::core::objectmodel::RenamedData<bool> useLinePoint;
+
+    SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_COLLISION_DETECTION_INTERSECTION()
+    sofa::core::objectmodel::RenamedData<bool> useLineLine;
+
+
+
+    Data<bool> d_useSphereTriangle; ///< activate Sphere-Triangle intersection tests
+    Data<bool> d_usePointPoint; ///< activate Point-Point intersection tests
+    Data<bool> d_useSurfaceNormals; ///< Compute the norms of the Detection Outputs by considering the normals of the surfaces involved.
+    Data<bool> d_useLinePoint; ///< activate Line-Point intersection tests
+    Data<bool> d_useLineLine; ///< activate Line-Line  intersection tests
 
 protected:
     MinProximityIntersection();
@@ -87,23 +106,17 @@ public:
     }
 
 
-    SOFA_ATTRIBUTE_DEPRECATED__COLLISION_DETECTION_INTERSECTION_AS_PARAMETER()
-    bool testIntersection(collision::geometry::Cube& cube1, collision::geometry::Cube& cube2) override;
-    SOFA_ATTRIBUTE_DEPRECATED__COLLISION_DETECTION_INTERSECTION_AS_PARAMETER()
-    int computeIntersection(collision::geometry::Cube& cube1, collision::geometry::Cube& cube2, OutputVector* contacts) override;
+    SOFA_ATTRIBUTE_DISABLED__COLLISION_DETECTION_INTERSECTION_AS_PARAMETER()
+    bool testIntersection(collision::geometry::Cube& cube1, collision::geometry::Cube& cube2) = delete;
+    SOFA_ATTRIBUTE_DISABLED__COLLISION_DETECTION_INTERSECTION_AS_PARAMETER()
+    int computeIntersection(collision::geometry::Cube& cube1, collision::geometry::Cube& cube2, OutputVector* contacts) = delete;
 
     template<typename SphereType1, typename SphereType2>
-    SOFA_ATTRIBUTE_DEPRECATED__COLLISION_DETECTION_INTERSECTION_AS_PARAMETER()
-    bool testIntersection(SphereType1& sph1, SphereType2& sph2)
-    {
-        return testIntersection(sph1, sph2, this);
-    }
+    SOFA_ATTRIBUTE_DISABLED__COLLISION_DETECTION_INTERSECTION_AS_PARAMETER()
+    bool testIntersection(SphereType1& sph1, SphereType2& sph2) = delete;
     template<typename SphereType1, typename SphereType2>
-    SOFA_ATTRIBUTE_DEPRECATED__COLLISION_DETECTION_INTERSECTION_AS_PARAMETER()
-    int computeIntersection(SphereType1& sph1, SphereType2& sph2, OutputVector* contacts)
-    {
-        return computeIntersection(sph1, sph2, contacts, this);
-    }
+    SOFA_ATTRIBUTE_DISABLED__COLLISION_DETECTION_INTERSECTION_AS_PARAMETER()
+    int computeIntersection(SphereType1& sph1, SphereType2& sph2, OutputVector* contacts) = delete;
 
 };
 

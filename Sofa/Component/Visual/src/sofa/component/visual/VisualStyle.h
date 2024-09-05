@@ -26,6 +26,8 @@
 #include <sofa/core/visual/Data[DisplayFlags].h>
 #include <sofa/simulation/fwd.h>
 
+#include <sofa/core/objectmodel/RenamedData.h>
+
 namespace sofa::component::visual
 {
 /** \brief VisualStyle component controls the DisplayFlags state
@@ -67,7 +69,10 @@ public:
     void fwdDraw(VisualParams* ) override;
     void bwdDraw(VisualParams* ) override;
 
-    Data<DisplayFlags> displayFlags; ///< Display Flags
+    SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_VISUAL()
+    sofa::core::objectmodel::RenamedData<DisplayFlags> displayFlags;
+
+    Data<DisplayFlags> d_displayFlags; ///< Display Flags
 
 protected:
     DisplayFlags backupFlags;

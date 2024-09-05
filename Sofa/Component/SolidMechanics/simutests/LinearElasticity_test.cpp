@@ -157,15 +157,15 @@ CylinderTractionStruct<DataTypes>  createCylinderTractionScene(
     typename component::mechanicalload::TrianglePressureForceField<DataTypes>::SPtr tpff=
             modeling::addNew<typename component::mechanicalload::TrianglePressureForceField<DataTypes> >(root);
     tractionStruct.forceField=tpff;
-    sofa::modeling::setDataLink(&boxRoi2->d_triangleIndices,&tpff->triangleList);
+    sofa::modeling::setDataLink(&boxRoi2->d_triangleIndices,&tpff->d_triangleList);
     // LineProjectiveConstraint
     typename component::constraint::projective::LineProjectiveConstraint<DataTypes>::SPtr ptlc=
             modeling::addNew<typename component::constraint::projective::LineProjectiveConstraint<DataTypes> >(root);
-    ptlc->f_direction=Coord(1,0,0);
-    ptlc->f_origin=Coord(0,0,0);
+    ptlc->d_direction=Coord(1, 0, 0);
+    ptlc->d_origin=Coord(0, 0, 0);
     sofa::type::vector<sofa::Index> vArray;
     vArray.push_back(resolutionCircumferential*(resolutionRadial-1)+1);
-    ptlc->f_indices.setValue(vArray);
+    ptlc->d_indices.setValue(vArray);
 
     return tractionStruct;
 }

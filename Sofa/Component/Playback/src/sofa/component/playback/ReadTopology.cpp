@@ -28,8 +28,11 @@ namespace sofa::component::playback
 
 using namespace defaulttype;
 
-int ReadTopologyClass = core::RegisterObject("Read topology containers informations from file at each timestep")
-        .add< ReadTopology >();
+void registerReadTopology(sofa::core::ObjectFactory* factory)
+{
+    factory->registerObjects(core::ObjectRegistrationData("Read topology containers informations from file at each timestep.")
+        .add< ReadTopology >());
+}
 
 ReadTopologyCreator::ReadTopologyCreator(const core::ExecParams* params)
     :Visitor(params)
@@ -91,7 +94,7 @@ void ReadTopologyCreator::addReadTopology(core::topology::BaseMeshTopology* topo
         std::ostringstream ofilename;
         ofilename << sceneName << "_" << counterReadTopology << "_" << topology->getName()  << "_topology" << extension ;
 
-        rt->f_filename.setValue(ofilename.str());  rt->f_listening.setValue(false); //Deactivated only called by extern functions
+        rt->d_filename.setValue(ofilename.str());  rt->f_listening.setValue(false); //Deactivated only called by extern functions
         if (init) rt->init();
 
         ++counterReadTopology;

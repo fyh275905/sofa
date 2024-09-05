@@ -44,8 +44,9 @@ int NewProximityIntersectionClass = core::RegisterObject("Optimized Proximity In
 
 NewProximityIntersection::NewProximityIntersection()
     : BaseProximityIntersection()
-    , useLineLine(initData(&useLineLine, false, "useLineLine", "Line-line collision detection enabled"))
+    , d_useLineLine(initData(&d_useLineLine, false, "useLineLine", "Line-line collision detection enabled"))
 {
+    useLineLine.setOriginalData(&d_useLineLine);
 }
 
 void NewProximityIntersection::init()
@@ -78,16 +79,5 @@ int NewProximityIntersection::computeIntersection(Cube& cube1, Cube& cube2, Outp
 
     return BaseProximityIntersection::computeIntersection(cube1, cube2, contacts, currentIntersection);
 }
-
-bool NewProximityIntersection::testIntersection(Cube& cube1, Cube& cube2)
-{
-    return testIntersection(cube1, cube2, this );
-}
-
-int NewProximityIntersection::computeIntersection(Cube& cube1, Cube& cube2, OutputVector* contacts)
-{
-    return computeIntersection(cube1, cube2, contacts, this);
-}
-
 
 } // namespace sofa::component::collision::detection::intersection

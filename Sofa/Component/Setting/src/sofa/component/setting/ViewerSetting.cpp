@@ -30,16 +30,22 @@ namespace sofa::component::setting
 using namespace sofa::type;
 using namespace sofa::helper;
 
-int ViewerSettingClass = core::RegisterObject("Configuration for the Viewer of your application")
-        .add< ViewerSetting >()
-        .addAlias("Viewer")
-        ;
+void registerViewerSetting(sofa::core::ObjectFactory* factory)
+{
+    factory->registerObjects(core::ObjectRegistrationData("Configuration for the Viewer of your application.")
+        .add< ViewerSetting >());
+}
 
 ViewerSetting::ViewerSetting()
-    : resolution(initData(&resolution, Vec<2,int>(800,600), "resolution", "resolution of the Viewer"))
-    , fullscreen(initData(&fullscreen, false, "fullscreen", "Fullscreen mode"))
-    , cameraMode(initData(&cameraMode, {"Perspective","Orthographic"}, "cameraMode", "Camera mode"))
-    , objectPickingMethod(initData(&objectPickingMethod, {"Ray casting","Selection buffer"}, "objectPickingMethod","The method used to pick objects"))
-{}
+    : d_resolution(initData(&d_resolution, Vec<2,int>(800, 600), "resolution", "resolution of the Viewer"))
+    , d_fullscreen(initData(&d_fullscreen, false, "fullscreen", "Fullscreen mode"))
+    , d_cameraMode(initData(&d_cameraMode, {"Perspective", "Orthographic"}, "cameraMode", "Camera mode"))
+    , d_objectPickingMethod(initData(&d_objectPickingMethod, {"Ray casting", "Selection buffer"}, "objectPickingMethod", "The method used to pick objects"))
+{
+    resolution.setOriginalData(&d_resolution);
+    fullscreen.setOriginalData (&d_fullscreen);
+    cameraMode.setOriginalData(&d_cameraMode);
+    objectPickingMethod.setOriginalData(&d_objectPickingMethod);
+}
 
 } // namespace sofa::component::setting

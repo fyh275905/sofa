@@ -45,12 +45,17 @@ int MinProximityIntersectionClass = core::RegisterObject("A set of methods to co
 
 MinProximityIntersection::MinProximityIntersection()
     : BaseProximityIntersection()
-    , useSphereTriangle(initData(&useSphereTriangle, true, "useSphereTriangle","activate Sphere-Triangle intersection tests"))
-    , usePointPoint(initData(&usePointPoint, true, "usePointPoint","activate Point-Point intersection tests"))
-    , useSurfaceNormals(initData(&useSurfaceNormals, false, "useSurfaceNormals", "Compute the norms of the Detection Outputs by considering the normals of the surfaces involved."))
-    , useLinePoint(initData(&useLinePoint, true, "useLinePoint", "activate Line-Point intersection tests"))
-    , useLineLine(initData(&useLineLine, true, "useLineLine", "activate Line-Line  intersection tests"))
+    , d_useSphereTriangle(initData(&d_useSphereTriangle, true, "useSphereTriangle", "activate Sphere-Triangle intersection tests"))
+    , d_usePointPoint(initData(&d_usePointPoint, true, "usePointPoint", "activate Point-Point intersection tests"))
+    , d_useSurfaceNormals(initData(&d_useSurfaceNormals, false, "useSurfaceNormals", "Compute the norms of the Detection Outputs by considering the normals of the surfaces involved."))
+    , d_useLinePoint(initData(&d_useLinePoint, true, "useLinePoint", "activate Line-Point intersection tests"))
+    , d_useLineLine(initData(&d_useLineLine, true, "useLineLine", "activate Line-Line  intersection tests"))
 {
+    useSphereTriangle.setOriginalData(&d_useSphereTriangle);
+    usePointPoint.setOriginalData(&d_usePointPoint);
+    useLinePoint.setOriginalData(&d_useLinePoint);
+    useLineLine.setOriginalData(&d_useLineLine);
+    useSurfaceNormals.setOriginalData(&d_useSurfaceNormals);
 }
 
 void MinProximityIntersection::init()
@@ -80,20 +85,9 @@ int MinProximityIntersection::computeIntersection(Cube& cube1, Cube& cube2, Outp
     return BaseProximityIntersection::computeIntersection(cube1, cube2, contacts, currentIntersection);
 }
 
-bool MinProximityIntersection::testIntersection(Cube& cube1, Cube& cube2)
-{
-    return testIntersection(cube1, cube2, this );
-}
-
-int MinProximityIntersection::computeIntersection(Cube& cube1, Cube& cube2, OutputVector* contacts)
-{
-    return computeIntersection(cube1, cube2, contacts, this);
-}
-
-
 bool MinProximityIntersection::getUseSurfaceNormals() const
 {
-    return useSurfaceNormals.getValue();
+    return d_useSurfaceNormals.getValue();
 }
 
 } // namespace sofa::component::collision::detection::intersection
