@@ -366,7 +366,7 @@ void UnilateralLagrangianConstraint<DataTypes>::getConstraintResolution(const co
         Contact& c = contacts[i];
         if(c.mu > 0.0)
         {
-            core::behavior::ConstraintResolution* ucrwf;
+            UnilateralConstraintResolutionWithFriction* ucrwf;
             ucrwf = new UnilateralConstraintResolutionWithFriction(c.mu, c.alpha, nullptr, &contactsStatus[i]);
             ucrwf->setTolerance(customTolerance);
             resTab[offset] = ucrwf;

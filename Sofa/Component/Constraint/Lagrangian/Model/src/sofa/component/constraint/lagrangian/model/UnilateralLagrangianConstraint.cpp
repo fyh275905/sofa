@@ -32,8 +32,8 @@ using namespace sofa::helper;
 
 //TODO(dmarchal) What does this TODO mean ?
 int UnilateralLagrangianConstraintClass = core::RegisterObject("TODO-UnilateralLagrangianConstraint")
-        .add< UnilateralLagrangianConstraint<Vec3Types> >(true)
-        .addAlias("UnilateralLagrangianConstraint")
+        .add< UnilateralLagrangianConstraint<Vec3Types> >()
+
         ;
 
 
