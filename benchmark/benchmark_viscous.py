@@ -31,7 +31,7 @@ def createScene(rootNode, dt=0.01, m=1, alpha=1, g=1):
     rootNode.addObject('BruteForceBroadPhase')
     rootNode.addObject('BVHNarrowPhase')
     rootNode.addObject('MinProximityIntersection', name='Proximity', alarmDistance='10', contactDistance='0.02')
-    rootNode.addObject('CollisionResponse', name='Response', response='FrictionContactConstraint', responseParams=f'alpha={alpha}')
+    rootNode.addObject('CollisionResponse', name='Response', response='FrictionContactConstraint', responseParams=f'mu=0.,alpha={alpha}')
     rootNode.addObject('GenericConstraintSolver', maxIterations='10', multithreading='true', tolerance='1.0e-3')
 
     boxTranslation = "-20 -0.9 0"
