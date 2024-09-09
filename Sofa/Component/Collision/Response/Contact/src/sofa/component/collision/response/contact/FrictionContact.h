@@ -36,11 +36,11 @@ using namespace sofa::component::constraint::lagrangian::model;
 
 namespace sofa::component::collision::response::contact
 {
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes = sofa::defaulttype::Vec3Types >
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes = sofa::defaulttype::Vec3Types >
 class FrictionContact : public core::collision::Contact, public ContactIdentifier
 {
 public:
-    SOFA_CLASS(SOFA_TEMPLATE4(FrictionContact, TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes), core::collision::Contact);
+    SOFA_CLASS(SOFA_TEMPLATE3(FrictionContact, TCollisionModel1, TCollisionModel2, ResponseDataTypes), core::collision::Contact);
     typedef TCollisionModel1 CollisionModel1;
     typedef TCollisionModel2 CollisionModel2;
     typedef core::collision::Intersection Intersection;
@@ -64,7 +64,7 @@ protected:
     mapper::ContactMapper<CollisionModel1,DataTypes1> mapper1;
     mapper::ContactMapper<CollisionModel2,DataTypes2> mapper2;
 
-    typename constraint::lagrangian::model::UnilateralLagrangianConstraint<sofa::defaulttype::Vec3Types,frictionType>::SPtr m_constraint;
+    typename constraint::lagrangian::model::UnilateralLagrangianConstraint<sofa::defaulttype::Vec3Types>::SPtr m_constraint;
     core::objectmodel::BaseContext* parent;
 
     SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_COLLISION_RESPONSE_CONTACT()
@@ -74,6 +74,7 @@ protected:
     sofa::core::objectmodel::RenamedData<double> tol;
 
     Data<double> d_mu; ///< friction coefficient (0 for frictionless contacts)
+    Data<double> d_alpha; ///< viscosity coefficient (0 for frictionless contacts)
     Data<double> d_tol; ///< tolerance for the constraints resolution (0 for default tolerance)
     std::vector< sofa::core::collision::DetectionOutput* > contacts;
     std::vector< std::pair< std::pair<int, int>, double > > mappedContacts;

@@ -32,21 +32,22 @@
 namespace sofa::component::collision::response::contact
 {
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::FrictionContact()
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::FrictionContact()
     : FrictionContact(nullptr, nullptr, nullptr)
 {
 }
 
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::FrictionContact(CollisionModel1* model1, CollisionModel2* model2, Intersection* intersectionMethod)
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::FrictionContact(CollisionModel1* model1, CollisionModel2* model2, Intersection* intersectionMethod)
     : model1(model1)
     , model2(model2)
     , intersectionMethod(intersectionMethod)
     , m_constraint(nullptr)
     , parent(nullptr)
     , d_mu (initData(&d_mu, 0.8, "mu", "friction coefficient (0 for frictionless contacts)"))
+    , d_alpha (initData(&d_alpha, 0., "alpha", "viscosity coefficient (0 for frictionless contacts)"))
     , d_tol (initData(&d_tol, 0.0, "tol", "tolerance for the constraints resolution (0 for default tolerance)"))
 {
     selfCollision = ((core::CollisionModel*)model1 == (core::CollisionModel*)model2);
@@ -60,13 +61,13 @@ FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTy
 
 }
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::~FrictionContact()
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::~FrictionContact()
 {
 }
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::cleanup()
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+void FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::cleanup()
 {
     if (m_constraint)
     {
@@ -89,8 +90,8 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseD
 }
 
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::setDetectionOutputs(OutputVector* o)
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+void FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::setDetectionOutputs(OutputVector* o)
 {
     TOutputVector& outputs = *static_cast<TOutputVector*>(o);
     // We need to remove duplicate contacts
@@ -130,8 +131,8 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseD
 }
 
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::activateMappers()
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+void FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::activateMappers()
 {
     if (!m_constraint)
     {
@@ -147,7 +148,7 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseD
         {
             mmodel2 = mapper2.createMapping(getName().c_str());
         }
-        m_constraint = sofa::core::objectmodel::New<constraint::lagrangian::model::UnilateralLagrangianConstraint<defaulttype::Vec3Types,frictionType> >(mmodel1, mmodel2);
+        m_constraint = sofa::core::objectmodel::New<constraint::lagrangian::model::UnilateralLagrangianConstraint<defaulttype::Vec3Types> >(mmodel1, mmodel2);
         m_constraint->setName( getName() );
         setInteractionTags(mmodel1, mmodel2);
         m_constraint->setCustomTolerance(d_tol.getValue() );
@@ -202,12 +203,13 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseD
     if (!selfCollision) mapper2.updateXfree();
 }
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::createResponse(core::objectmodel::BaseContext* group)
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+void FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::createResponse(core::objectmodel::BaseContext* group)
 {
 
     activateMappers();
     const double mu_ = this->d_mu.getValue();
+    const double alpha_ = this->d_alpha.getValue();
     // Checks if friction is considered
     if ( mu_ < 0.0 )
         msg_error() << "mu has to take positive values";
@@ -226,7 +228,7 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseD
             const long index = cantorPolynomia(o->id /*cantorPolynomia(index1, index2)*/,id);
 
             // Add contact in unilateral constraint
-            m_constraint->addContact(mu_, o->normal, distance, index1, index2, index, o->id);
+            m_constraint->addContact(mu_, alpha_, o->normal, distance, index1, index2, index, o->id);
         }
 
         if (parent!=nullptr)
@@ -244,8 +246,8 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseD
     }
 }
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::removeResponse()
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+void FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::removeResponse()
 {
     if (m_constraint)
     {
@@ -260,8 +262,8 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseD
     }
 }
 
-template <class TCollisionModel1, class TCollisionModel2, FrictionType frictionType, class ResponseDataTypes >
-void FrictionContact<TCollisionModel1, TCollisionModel2, frictionType, ResponseDataTypes>::setInteractionTags(MechanicalState1* mstate1, MechanicalState2* mstate2)
+template <class TCollisionModel1, class TCollisionModel2, class ResponseDataTypes >
+void FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::setInteractionTags(MechanicalState1* mstate1, MechanicalState2* mstate2)
 {
     sofa::core::objectmodel::TagSet tagsm1 = mstate1->getTags();
     sofa::core::objectmodel::TagSet tagsm2 = mstate2->getTags();

@@ -80,9 +80,9 @@ class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralConstraintResolut
     : public core::behavior::ConstraintResolution
 {
    public:
-    UnilateralConstraintResolutionWithFriction(SReal mu, PreviousForcesContainer* prev = nullptr,
+    UnilateralConstraintResolutionWithFriction(SReal mu, SReal alpha, PreviousForcesContainer* prev = nullptr,
                                                bool* active = nullptr)
-        : core::behavior::ConstraintResolution(3), _mu(mu), _prev(prev), _active(active)
+        : core::behavior::ConstraintResolution(3), _mu(mu), _alpha(alpha),_prev(prev), _active(active)
     {
     }
 
@@ -92,31 +92,10 @@ class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralConstraintResolut
 
    protected:
     SReal _mu;
+    SReal _alpha;
     SReal _W[6];
     PreviousForcesContainer* _prev;
     bool* _active;  // Will set this after the resolution
-};
-
-class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralConstraintResolutionWithViscousFriction
-    : public core::behavior::ConstraintResolution
-{
-   public:
-    UnilateralConstraintResolutionWithViscousFriction(SReal mu,  const SReal dt,PreviousForcesContainer* prev = nullptr,
-                                               bool* active = nullptr)
-        : core::behavior::ConstraintResolution(3), _mu(mu), _prev(prev), _active(active), m_dt(dt)
-    {
-    }
-
-    void init(int line, SReal** w, SReal* force) override;
-    void resolution(int line, SReal** w, SReal* d, SReal* force, SReal* dFree) override;
-    void store(int line, SReal* force, bool /*convergence*/) override;
-
-   protected:
-    SReal _mu;
-    SReal _W[6];
-    PreviousForcesContainer* _prev;
-    bool* _active;  // Will set this after the resolution
-    SReal m_dt;
 };
 
 }

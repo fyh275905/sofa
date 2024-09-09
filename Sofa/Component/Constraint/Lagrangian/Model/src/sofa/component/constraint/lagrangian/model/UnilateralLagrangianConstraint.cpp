@@ -32,15 +32,12 @@ using namespace sofa::helper;
 
 //TODO(dmarchal) What does this TODO mean ?
 int UnilateralLagrangianConstraintClass = core::RegisterObject("TODO-UnilateralLagrangianConstraint")
-        .add< UnilateralLagrangianConstraint<Vec3Types,FrictionType::COULOMB> >(true)
-        .addAlias("UnilateralCoulombLagrangianConstraint")
-        .add< UnilateralLagrangianConstraint<Vec3Types,FrictionType::VISCOUS> >()
-        .addAlias("UnilateralViscousLagrangianConstraint")
+        .add< UnilateralLagrangianConstraint<Vec3Types> >(true)
+        .addAlias("UnilateralLagrangianConstraint")
         ;
 
 
-template class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralLagrangianConstraint<Vec3Types,FrictionType::COULOMB>;
-template class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralLagrangianConstraint<Vec3Types,FrictionType::VISCOUS>;
+template class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralLagrangianConstraint<Vec3Types>;
 
 
 
@@ -90,6 +87,8 @@ void UnilateralConstraintResolutionWithFriction::resolution(int line, SReal** /*
         const SReal factor = fN / normFt;
         force[line+1] *= factor;
         force[line+2] *= factor;
+        force[line+1] -= _alpha*d[line+1];
+        force[line+2] -= _alpha*d[line+2];
     }
 }
 
@@ -108,64 +107,5 @@ void UnilateralConstraintResolutionWithFriction::store(int line, SReal* force, b
         _active = nullptr; // Won't be used in the haptic thread
     }
 }
-
-
-void UnilateralConstraintResolutionWithViscousFriction::init(int line, SReal** w, SReal* force)
-{
-    _W[0]=w[line  ][line  ];
-    _W[1]=w[line  ][line+1];
-    _W[2]=w[line  ][line+2];
-    _W[3]=w[line+1][line+1];
-    _W[4]=w[line+1][line+2];
-    _W[5]=w[line+2][line+2];
-
-    ////////////////// christian : the following does not work ! /////////
-    if(_prev)
-    {
-        force[line] = _prev->popForce();
-        force[line+1] = _prev->popForce();
-        force[line+2] = _prev->popForce();
-    }
-
-}
-
-void UnilateralConstraintResolutionWithViscousFriction::resolution(int line, SReal** /*w*/, SReal* d, SReal* force, SReal * /*dfree*/)
-{
-    SReal f[2];
-    SReal normFt;
-    SReal lumped_W = (_W[3] +_W[5])/2;
-
-    f[0] = force[line]; f[1] = force[line+1];
-    force[line] -= d[line] / _W[0];
-
-    if(force[line] < 0)
-    {
-        force[line]=0; force[line+1]=0; force[line+2]=0;
-        return;
-    }
-
-    
-    d[line+1] += _W[1] * (force[line]-f[0]);
-    d[line+2] += _W[2] * (force[line]-f[0]);
-    force[line+1] -= _mu*d[line+1];
-    force[line+2] -= _mu*d[line+2];
-}
-
-void UnilateralConstraintResolutionWithViscousFriction::store(int line, SReal* force, bool /*convergence*/)
-{
-    if(_prev)
-    {
-        _prev->pushForce(force[line]);
-        _prev->pushForce(force[line+1]);
-        _prev->pushForce(force[line+2]);
-    }
-
-    if(_active)
-    {
-        *_active = (force[line] != 0);
-        _active = nullptr; // Won't be used in the haptic thread
-    }
-}
-
 
 } //namespace sofa::component::constraint::lagrangian::model
