@@ -32,7 +32,6 @@
 
 #include <sofa/core/objectmodel/RenamedData.h>
 
-using namespace sofa::component::constraint::lagrangian::model;
 
 namespace sofa::component::collision::response::contact
 {
