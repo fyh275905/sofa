@@ -47,7 +47,7 @@ FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::Friction
     , m_constraint(nullptr)
     , parent(nullptr)
     , d_mu (initData(&d_mu, 0.8, "mu", "friction coefficient (0 for frictionless contacts)"))
-    , d_alpha (initData(&d_alpha, 0., "alpha", "viscosity coefficient (0 for frictionless contacts)"))
+    , d_drag (initData(&d_drag, 0., "drag", "viscosity coefficient (0 for frictionless contacts)"))
     , d_tol (initData(&d_tol, 0.0, "tol", "tolerance for the constraints resolution (0 for default tolerance)"))
 {
     selfCollision = ((core::CollisionModel*)model1 == (core::CollisionModel*)model2);
@@ -209,7 +209,7 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::cre
 
     activateMappers();
     const double mu_ = this->d_mu.getValue();
-    const double alpha_ = this->d_alpha.getValue();
+    const double drag_ = this->d_drag.getValue();
     // Checks if friction is considered
     if ( mu_ < 0.0 )
         msg_error() << "mu has to take positive values";
@@ -228,7 +228,7 @@ void FrictionContact<TCollisionModel1, TCollisionModel2, ResponseDataTypes>::cre
             const long index = cantorPolynomia(o->id /*cantorPolynomia(index1, index2)*/,id);
 
             // Add contact in unilateral constraint
-            m_constraint->addContact(mu_, alpha_, o->normal, distance, index1, index2, index, o->id);
+            m_constraint->addContact(mu_, drag_, o->normal, distance, index1, index2, index, o->id);
         }
 
         if (parent!=nullptr)

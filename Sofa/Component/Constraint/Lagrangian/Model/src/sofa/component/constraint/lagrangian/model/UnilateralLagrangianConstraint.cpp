@@ -86,8 +86,8 @@ void UnilateralConstraintResolutionWithFriction::resolution(int line, SReal** /*
         const SReal factor = fN / normFt;
         force[line+1] *= factor;
         force[line+2] *= factor;
-        force[line+1] -= _alpha*d[line+1];
-        force[line+2] -= _alpha*d[line+2];
+        force[line+1] -= _drag*d[line+1];
+        force[line+2] -= _drag*d[line+2];
     }
 }
 

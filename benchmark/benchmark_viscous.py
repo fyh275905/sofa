@@ -2,8 +2,8 @@ import sys
 import os
 import Sofa
 
-dirname = '/home/alexandre/workspace/sofa/src/sofa/benchmark'
-def createScene(rootNode, dt=0.01, m=1, alpha=1, g=1):
+dirname = os.path.dirname(__file__)
+def createScene(rootNode, dt=0.01, m=1, alpha=1, g=1, L=100, mu=0):
 
     # rootNode
     rootNode.addObject('RequiredPlugin', name='Sofa.Component.Collision.Detection.Algorithm')
@@ -25,13 +25,16 @@ def createScene(rootNode, dt=0.01, m=1, alpha=1, g=1):
     rootNode.addObject('RequiredPlugin', name='Sofa.Component.LinearSolver.Direct')
     rootNode.addObject('RequiredPlugin', name='Sofa.Component.Mapping.NonLinear')
     rootNode.addObject('RequiredPlugin', name='Sofa.Component.Topology.Container.Dynamic')
-    
+    rootNode.addObject('RequiredPlugin', name='Sofa.Component.Constraint.Lagrangian.Solver') # Needed to use components [GenericConstraintSolver]  
+    rootNode.addObject('RequiredPlugin', name='Sofa.Component.LinearSystem') # Needed to use components [MatrixLinearSystem] 
+    rootNode.addObject('RequiredPlugin', name='MultiThreading') # Needed to use components [ParallelBVHNarrowPhase,ParallelBruteForceBroadPhase]  
+
     rootNode.addObject('FreeMotionAnimationLoop')
     rootNode.addObject('CollisionPipeline', verbose='0', depth='10', draw='0')
-    rootNode.addObject('BruteForceBroadPhase')
-    rootNode.addObject('BVHNarrowPhase')
+    rootNode.addObject('ParallelBruteForceBroadPhase')
+    rootNode.addObject('ParallelBVHNarrowPhase')
     rootNode.addObject('MinProximityIntersection', name='Proximity', alarmDistance='10', contactDistance='0.02')
-    rootNode.addObject('CollisionResponse', name='Response', response='FrictionContactConstraint', responseParams=f'mu=0.,alpha={alpha}')
+    rootNode.addObject('CollisionResponse', name='Response', response='FrictionContactConstraint', responseParams=f'mu={mu}&drag={alpha}')
     rootNode.addObject('GenericConstraintSolver', maxIterations='10', multithreading='true', tolerance='1.0e-3')
 
     boxTranslation = "-20 -0.9 0"
@@ -73,7 +76,7 @@ def createScene(rootNode, dt=0.01, m=1, alpha=1, g=1):
     # rootNode/Floor
     Floor = rootNode.addChild('Floor')
     Floor = Floor
-    Floor.addObject('TriangleSetTopologyContainer', name='FloorTopology', position='-20 -15 -2  50000 -15 -2  50000 15 -2  -20 15 -2', triangles='0 2 1  0 3 2')
+    Floor.addObject('TriangleSetTopologyContainer', name='FloorTopology', position=f'-20 -15 -2  {L} -15 -2  {L} 15 -2  -20 15 -2', triangles='0 2 1  0 3 2')
     Floor.addObject('MechanicalObject', name='FloorDOF', template='Vec3d')
     Floor.addObject('TriangleCollisionModel', name='FloorCM', proximity='0.002', moving='0', simulated='0', color='0.3 0.3 0.3 0.1')
     Floor.addObject('OglModel', name='VisualModel', src='@FloorTopology')
@@ -101,6 +104,7 @@ def error_as_a_function_of_dt():
     m = 1
     alpha = .5
     g = 1
+    L = 50000
 
     dt_arr = np.logspace(-4,-2,10)
     limitSpeeds = np.zeros_like(dt_arr)
@@ -108,12 +112,11 @@ def error_as_a_function_of_dt():
         print('\r', i, '/', len(dt_arr))
         root = Sofa.Core.Node("root")
 
-        createScene(root, dt=dt, m=m, alpha=alpha, g=g)
+        createScene(root, dt=dt, m=m, alpha=alpha, g=g, L=L)
 
         Sofa.Simulation.init(root)
 
         previousVelocity = 1.
-        
         while True:
             Sofa.Simulation.animate(root, root.dt.value)
             currentVelocity = root.Box.BoxDOF.velocity.value[0][0]
@@ -140,6 +143,7 @@ def limit_speed_as_a_function_of_m_and_alpha():
 
     g = 1
     N = 10
+    L=50000
     masses = np.logspace(-1,.8,N)
     alphas = np.logspace(0,.8,N)
     limitSpeeds = np.zeros((N,N))
@@ -148,7 +152,7 @@ def limit_speed_as_a_function_of_m_and_alpha():
         for j, alpha in enumerate(alphas):
             root = Sofa.Core.Node("root")
 
-            createScene(root, dt=1e-2, m=m, alpha=alpha, g=g)
+            createScene(root, dt=1e-2, m=m, alpha=alpha, g=g, L=L)
 
             Sofa.Simulation.init(root)
 
@@ -190,8 +194,10 @@ def limit_speed_as_a_function_of_m_and_g():
     import numpy as np
 
     alpha = 1
+    L=50000
     N = 10
     masses = np.logspace(-1,.8,N)
+        # p
     gs = np.logspace(-1,1,N)
     limitSpeeds = np.zeros((N,N))
     for i, m in enumerate(masses):
@@ -199,7 +205,7 @@ def limit_speed_as_a_function_of_m_and_g():
         for j, g in enumerate(gs):
             root = Sofa.Core.Node("root")
 
-            createScene(root, dt=1e-2, m=m, alpha=alpha, g=g)
+            createScene(root, dt=1e-2, m=m, alpha=alpha, g=g, L=50000)
 
             Sofa.Simulation.init(root)
 
@@ -241,6 +247,7 @@ def limit_speed_accuracy():
     import numpy as np
 
     N = 3
+    L=50000
     masses = np.logspace(-1,.8,N)
     gs = np.logspace(-1,1,N)
     alphas = np.logspace(0,.8,N)
@@ -252,7 +259,7 @@ def limit_speed_accuracy():
             for g in gs:
                 root = Sofa.Core.Node("root")
 
-                createScene(root, dt=1e-4, m=m, alpha=alpha, g=g)
+                createScene(root, dt=1e-4, m=m, alpha=alpha, g=g, L=L)
 
                 Sofa.Simulation.init(root)
 
@@ -271,13 +278,48 @@ def limit_speed_accuracy():
     limitSpeeds = np.array(limitSpeeds)
     plt.plot(limitSpeeds[:,0])
     plt.plot(limitSpeeds[:,1])
+    plt.savefig(os.path.join(dirname, 'v_lim_theory_vs_sim.png'))
     plt.show()
+
     plt.figure()
     plt.boxplot((limitSpeeds[:,1]-limitSpeeds[:,0])/(1e-12+limitSpeeds[:,0]))
+    plt.savefig(os.path.join(dirname, 'v_lim_error_theory_vs_sim.png'))
     plt.show()
+
+
+def quick_test():
+    import plotext
+    m, g, alpha = 1, 1, 0
+    mu = .1
+    root = Sofa.Core.Node("root")
+    createScene(root, dt=1e-4, m=m, alpha=alpha, g=g, mu=mu, L=1000)
+    Sofa.Simulation.init(root)
+    Sofa.Simulation.animate(root, root.dt.value)
+    v = []
+    x = []
+    count = 0
+    while root.Box.BoxDOF.position.value[0][0] < 1000/1.4142:
+        v.append(root.Box.BoxDOF.velocity.value[0][0])
+        x.append(root.Box.BoxDOF.position.value[0][0])
+        Sofa.Simulation.animate(root, root.dt.value)
+        if not(count%1000):
+            plotext.clear_figure()
+            plotext.plot(x, yside='right')
+            plotext.plot(v, yside='left')
+            if alpha >0:
+                plotext.horizontal_line((1-mu)*m*g/alpha, yside='left')
+            plotext.theme('clear')
+            plotext.show()
+
+        count += 1
+    
+
+
+
 
 # Function used only if this script is called from a python environment
 if __name__ == '__main__':
+    # quick_test()
     # error_as_a_function_of_dt()
     # limit_speed_as_a_function_of_m_and_alpha()
     # limit_speed_as_a_function_of_m_and_g()
