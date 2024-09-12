@@ -62,7 +62,7 @@ protected:
     mapper::ContactMapper<CollisionModel1,DataTypes1> mapper1;
     mapper::ContactMapper<CollisionModel2,DataTypes2> mapper2;
 
-    typename constraint::lagrangian::model::UnilateralLagrangianConstraint<sofa::defaulttype::Vec3Types>::SPtr m_constraint;
+    constraint::lagrangian::model::UnilateralLagrangianConstraint<sofa::defaulttype::Vec3Types>::SPtr m_constraint;
     core::objectmodel::BaseContext* parent;
 
     SOFA_ATTRIBUTE_DEPRECATED__RENAME_DATA_IN_COLLISION_RESPONSE_CONTACT()

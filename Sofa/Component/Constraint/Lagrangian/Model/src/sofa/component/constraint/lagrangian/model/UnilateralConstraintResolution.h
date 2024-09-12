@@ -82,7 +82,7 @@ class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralConstraintResolut
    public:
     UnilateralConstraintResolutionWithFriction(SReal mu, SReal drag, PreviousForcesContainer* prev = nullptr,
                                                bool* active = nullptr)
-        : core::behavior::ConstraintResolution(3), _mu(mu), _drag(drag),_prev(prev), _active(active)
+        : core::behavior::ConstraintResolution(3), _mu(mu), _drag(drag), _prev(prev), _active(active)
     {
     }
 

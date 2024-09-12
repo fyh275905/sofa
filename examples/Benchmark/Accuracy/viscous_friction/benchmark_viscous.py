@@ -83,20 +83,6 @@ def createScene(rootNode, dt=0.01, m=1, alpha=1, g=1, L=100, mu=0):
 
     return 0
 
-def main_gui():
-    import SofaRuntime
-    import Sofa.Gui
-
-    root = Sofa.Core.Node('root')
-    createScene(root)
-    Sofa.Simulation.init(root)
-
-    Sofa.Gui.GUIManager.Init('myscene', 'qglviewer')
-    Sofa.Gui.GUIManager.createGUI(root, __file__)
-    Sofa.Gui.GUIManager.SetDimension(1080, 1080)
-    Sofa.Gui.GUIManager.MainLoop(root)
-    Sofa.Gui.GUIManager.closeGUI()
-
 def error_as_a_function_of_dt():
     import matplotlib.pyplot as plt
     import numpy as np
@@ -247,7 +233,7 @@ def limit_speed_accuracy():
     import numpy as np
 
     N = 10
-    L=50000
+    L = 50000
     masses = np.logspace(-1,.8,N)
     gs = np.logspace(-1,1,N)
     alphas = np.logspace(0,.8,N)
@@ -314,13 +300,12 @@ def quick_test():
         count += 1
     
 
-
-
-
-# Function used only if this script is called from a python environment
 if __name__ == '__main__':
-    # quick_test()
-    # error_as_a_function_of_dt()
-    # limit_speed_as_a_function_of_m_and_alpha()
-    # limit_speed_as_a_function_of_m_and_g()
+    # quick_test() # use to visualize velocity in the terminal, useful while developing the feature
+    # check error scaling
+    error_as_a_function_of_dt()
+    # check functional relationship between m, alpha, g and v_lim
+    limit_speed_as_a_function_of_m_and_alpha()
+    limit_speed_as_a_function_of_m_and_g()
+    # check accuracy of the limit velocity
     limit_speed_accuracy()

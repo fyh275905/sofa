@@ -81,19 +81,19 @@ void UnilateralLagrangianConstraint<DataTypes>::addContact(SReal mu, SReal drag,
     contacts.resize(contacts.size() + 1);
     Contact &c = contacts.back();
 
-    c.P			= P;
-    c.Q			= Q;
-    c.m1		= m1;
-    c.m2		= m2;
-    c.norm		= norm;
-    c.t			= Deriv(norm.z(), norm.x(), norm.y());
-    c.s			= cross(norm, c.t);
-    c.s			= c.s / c.s.norm();
-    c.t			= cross((-norm), c.s);
-    c.mu		= mu;
-    c.drag     = drag;
+    c.P         = P;
+    c.Q         = Q;
+    c.m1        = m1;
+    c.m2        = m2;
+    c.norm      = norm;
+    c.t         = Deriv(norm.z(), norm.x(), norm.y());
+    c.s         = cross(norm, c.t);
+    c.s         = c.s / c.s.norm();
+    c.t         = cross((-norm), c.s);
+    c.mu        = mu;
+    c.drag      = drag;
     c.contactId = id;
-    c.localId	= localid;
+    c.localId   = localid;
     c.contactDistance = contactDistance;
 }
 
@@ -370,7 +370,7 @@ void UnilateralLagrangianConstraint<DataTypes>::getConstraintResolution(const co
             ucrwf->setTolerance(customTolerance);
             resTab[offset] = ucrwf;
 
-            // TODO : cette méthode de stockage des forces peu mal fonctionner avec 2 threads quand on utilise l'haptique
+            // TODO : cette méthode de stockage des forces peut mal fonctionner avec 2 threads quand on utilise l'haptique
             offset += 3;
         }
         else
