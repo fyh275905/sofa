@@ -246,7 +246,7 @@ def limit_speed_accuracy():
     import matplotlib.pyplot as plt
     import numpy as np
 
-    N = 3
+    N = 10
     L=50000
     masses = np.logspace(-1,.8,N)
     gs = np.logspace(-1,1,N)
