@@ -63,12 +63,11 @@ public:
     Data<SReal> d_totalMass;    ///< if >0 : total mass of this body
     sofa::core::objectmodel::DataFileName d_filenameMass; ///< a .rigid file to automatically load the inertia matrix and other parameters
 
+    /// Visualization-related data
     Data<bool>  d_showCenterOfGravity; ///< display the center of gravity of the system
     Data<float> d_showAxisSize; ///< factor length of the axis displayed (only used for rigids)
-
     Data<bool>  d_computeMappingInertia; ///< to be used if the mass is placed under a mapping
     Data<bool>  d_showInitialCenterOfGravity; ///< display the initial center of gravity of the system
-
     Data<bool>  d_showX0; ///< display the rest positions
 
     /// optional range of local DOF indices. Any computation involving only
@@ -78,6 +77,14 @@ public:
     DataSetIndex     d_indices; ///< optional local DOF indices. Any computation involving only indices outside of this list are discarded
     Data<bool> d_preserveTotalMass; ///< Prevent totalMass from decreasing when removing particles.
 
+    /// Enumeration specifying which data was used for initialization
+    enum class InitMethod
+    {
+        TOTALMASS,
+        VERTEXMASS
+    };
+    InitMethod m_initMethod;
+
     ////////////////////////// Inherited attributes ////////////////////////////
     /// https://gcc.gnu.org/onlinedocs/gcc/Name-lookup.html
     /// Bring inherited attributes and function in the current lookup context.
@@ -86,6 +93,7 @@ public:
     using core::behavior::ForceField<DataTypes>::mstate ;
     using core::objectmodel::BaseObject::getContext;
     ////////////////////////////////////////////////////////////////////////////
+
 
     /// Link to be set to the topology container in the component graph.
     SingleLink <UniformMass<DataTypes>, sofa::core::topology::BaseMeshTopology, BaseLink::FLAG_STOREPATH | BaseLink::FLAG_STRONGLINK> l_topology;
@@ -115,10 +123,8 @@ public:
 
     void loadRigidMass(const std::string& filename);
 
-    void reinit() override;
     void init() override;
     void initDefaultImpl() ;
-    void doUpdateInternal() override;
 
     /// @name Check and standard initialization functions from mass information
     /// @{
@@ -126,9 +132,12 @@ public:
     virtual void initFromVertexMass();
 
     virtual bool checkTotalMass();
-    virtual void checkTotalMassInit();
     virtual void initFromTotalMass();
     /// @}
+
+    /// Functions updating data
+    sofa::core::objectmodel::ComponentState updateFromTotalMass();
+    sofa::core::objectmodel::ComponentState updateFromVertexMass();
 
     void addMDx(const core::MechanicalParams* mparams, DataVecDeriv& f, const DataVecDeriv& dx, SReal factor) override;
     void accFromF(const core::MechanicalParams* mparams, DataVecDeriv& a, const DataVecDeriv& f) override;

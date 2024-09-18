@@ -58,12 +58,12 @@ ConstantForceField<DataTypes>::ConstantForceField()
 
     sofa::core::objectmodel::Base::addUpdateCallback("updateFromForcesVector", {&d_forces, &d_indices}, [this](const core::DataTracker& )
     {
-        if(!m_isTotalForceUsed)
+        if(m_initMethod == InitMethod::FORCESVECTOR)
         {
             msg_info() << "dataInternalUpdate: data forces has changed";
             return updateFromForcesVector();
         }
-        else
+        else if(m_initMethod == InitMethod::TOTALFORCE)
         {
             msg_info() << "totalForce data is initially used, the callback associated with the forces vector is skipped";
             return updateFromTotalForce();
@@ -72,12 +72,12 @@ ConstantForceField<DataTypes>::ConstantForceField()
 
     sofa::core::objectmodel::Base::addUpdateCallback("updateFromTotalForce", {&d_totalForce, &d_indices}, [this](const core::DataTracker& )
     {
-        if(m_isTotalForceUsed)
+        if(m_initMethod == InitMethod::TOTALFORCE)
         {
             msg_info() << "dataInternalUpdate: data totalForce has changed";
             return updateFromTotalForce();
         }
-        else
+        else if(m_initMethod == InitMethod::FORCESVECTOR)
         {
             msg_info() << "forces data is initially used, the callback associated with the totalForce is skipped";
             return updateFromForcesVector();
@@ -89,15 +89,16 @@ ConstantForceField<DataTypes>::ConstantForceField()
 template<class DataTypes>
 void ConstantForceField<DataTypes>::init()
 {
-    this->d_componentState.setValue(sofa::core::objectmodel::ComponentState::Invalid);
-       
+    this->d_componentState.setValue(sofa::core::objectmodel::ComponentState::Valid);
+
+
+    /// Check link to topology
     if (l_topology.empty())
     {
         msg_info() << "link to Topology container should be set to ensure right behavior. First Topology found in current context will be used.";
         l_topology.set(this->getContext()->getMeshTopologyLink());
     }
 
-    // temprory pointer to topology
     if (sofa::core::topology::BaseMeshTopology* _topology = l_topology.get())
     {
         msg_info() << "Topology path used: '" << l_topology.getLinkedPath() << "'";
@@ -115,23 +116,23 @@ void ConstantForceField<DataTypes>::init()
     }
 
 
-
-    /// Check on data isSet()
+    /// Check which input data isSet() to define force initialization
     if (d_forces.isSet())
     {
         if(d_totalForce.isSet())
         {
-            msg_warning() <<"Both data \'forces\' and \'totalForce\' cannot be used simultaneously, please set only one of them to remove this warning";
+            msg_warning() <<"Both data \'forces\' and \'totalForce\' cannot be used simultaneously.\n"
+                         << "Vector \'forces\' is used. Please set only one force input to remove this warning";
         }
 
-        m_isTotalForceUsed = false;
+        m_initMethod = InitMethod::FORCESVECTOR;
         d_totalForce.setReadOnly(true);
 
         msg_info() << "Input vector forces is used for initialization";
     }
     else if (d_totalForce.isSet())
     {
-        m_isTotalForceUsed = true;
+        m_initMethod = InitMethod::TOTALFORCE;
         d_forces.setReadOnly(true);
 
         msg_info() << "Input totalForce is used for initialization";
@@ -152,11 +153,14 @@ void ConstantForceField<DataTypes>::init()
         std::iota (std::begin(indicesEdit), std::end(indicesEdit), 0);
     }
 
-    // init from ForceField
+
+    /// init from ForceField
     Inherit::init();
 
-    // if all init passes, component is valid
-    this->d_componentState.setValue(sofa::core::objectmodel::ComponentState::Valid);
+
+    /// Trigger callbacks to update data (see constructor)
+    if(!this->isComponentStateValid())
+        msg_error() << "Initialization process is invalid";
 }
 
 
@@ -370,6 +374,9 @@ void ConstantForceField<DataTypes>::addForce(const core::MechanicalParams* param
 template <class DataTypes>
 SReal ConstantForceField<DataTypes>::getPotentialEnergy(const core::MechanicalParams* params, const DataVecCoord& x) const
 {
+    if(!this->isComponentStateValid())
+        return 0_sreal;
+
     SOFA_UNUSED(params);
     const VecIndex& indices = d_indices.getValue();
     const VecDeriv& f = d_forces.getValue();
@@ -399,11 +406,14 @@ SReal ConstantForceField<DataTypes>::getPotentialEnergy(const core::MechanicalPa
 template <class DataTypes>
 void ConstantForceField<DataTypes>::setForce(unsigned i, const Deriv& force)
 {
-    if(m_isTotalForceUsed)
+    if(!this->isComponentStateValid())
+        return;
+
+    if(m_initMethod == InitMethod::TOTALFORCE)
     {
         msg_warning() << "\'forces\' vector is modified using setForce() while totalMass is initially used. "
                       << "Now the 'forces\' vector is used.";
-        m_isTotalForceUsed = false;
+        m_initMethod = InitMethod::FORCESVECTOR;
     }
 
     auto indices = sofa::helper::getWriteAccessor(d_indices);
