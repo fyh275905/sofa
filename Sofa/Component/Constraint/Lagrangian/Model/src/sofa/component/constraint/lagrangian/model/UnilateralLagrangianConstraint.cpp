@@ -30,11 +30,8 @@ namespace sofa::component::constraint::lagrangian::model
 using namespace sofa::defaulttype;
 using namespace sofa::helper;
 
-void registerUnilateralLagrangianConstraint(sofa::core::ObjectFactory* factory)
-{
-    factory->registerObjects(core::ObjectRegistrationData("Unilateral Lagrangian Constraint")
-        .add<UnilateralLagrangianConstraint<Vec3Types>>());
-}
+int UnilateralLagrangianConstraintClass = core::RegisterObject("UnilateralLagrangianConstraint")
+        .add< UnilateralLagrangianConstraint<Vec3Types> >();
 
 template class SOFA_COMPONENT_CONSTRAINT_LAGRANGIAN_MODEL_API UnilateralLagrangianConstraint<Vec3Types>;
 
