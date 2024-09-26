@@ -26,6 +26,7 @@
 #include <sofa/component/collision/geometry/RayModel.h>
 #include <sofa/component/collision/response/contact/BarycentricPenalityContact.inl>
 #include <sofa/component/collision/response/contact/FrictionContact.inl>
+#include <sofa/component/collision/response/contact/BaseUnilateralContactResponse.inl>
 #include <sofa/component/collision/response/contact/RayContact.h>
 #include <CollisionOBBCapsule/response/mapper/OBBContactMapper.h>
 
