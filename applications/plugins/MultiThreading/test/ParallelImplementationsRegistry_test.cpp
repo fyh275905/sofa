@@ -24,11 +24,15 @@
 #include <MultiThreading/ParallelImplementationsRegistry.h>
 #include <sofa/core/ObjectFactory.h>
 
+#include <sofa/simpleapi/SimpleApi.h>
+
 namespace multithreading
 {
 
 TEST(ParallelImplementationsRegistry, existInObjectFactory)
 {
+    sofa::simpleapi::importPlugin("Sofa.Component.SolidMechanics.FEM.Elastic");
+
     const auto implementations = ParallelImplementationsRegistry::getImplementations();
 
     for (const auto& [seq, par] : implementations)
